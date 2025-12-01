@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage>
+  <AxisMap AxisIndex="0" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="1" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="2" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="3" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="4" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="5" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="6" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="7" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="8" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="1000" VirstualNPosition="-100" VirstualPPosition="100" />
+  <AxisMap AxisIndex="9" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="1000" VirstualNPosition="-100" VirstualPPosition="100" />
+  <AxisMap AxisIndex="10" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <AxisMap AxisIndex="11" VirstualHomeDelayTime="2000" VirstualMoveDelayTime="10000" VirstualNPosition="-1500" VirstualPPosition="1500" />
+  <InputIOMap AxisIndex="-1" IOIndex="0" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="1" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="2" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="3" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="4" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="5" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="6" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="7" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="8" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="9" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="10" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="11" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="12" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="13" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="14" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="15" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="16" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="17" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="18" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="19" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="20" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="21" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="22" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="23" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="24" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="25" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="26" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="27" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="28" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="29" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="30" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="31" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="32" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="33" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="34" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="35" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="36" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="37" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="38" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="39" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="40" VirstualPointState="True" />
+  <InputIOMap AxisIndex="-1" IOIndex="41" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="42" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="43" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="44" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="45" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="46" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="47" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="48" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="49" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="50" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="51" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="52" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="53" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="54" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="55" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="56" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="57" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="58" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="59" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="60" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="61" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="62" VirstualPointState="False" />
+  <InputIOMap AxisIndex="-1" IOIndex="63" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="0" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="1" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="2" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="3" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="4" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="5" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="6" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="7" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="8" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="9" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="10" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="11" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="12" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="13" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="14" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="15" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="16" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="17" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="18" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="19" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="20" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="21" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="22" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="23" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="24" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="25" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="26" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="27" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="28" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="29" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="30" VirstualPointState="False" />
+  <OutputIOMap AxisIndex="-1" IOIndex="31" VirstualPointState="False" />
+</MotionManage>

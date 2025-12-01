@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage IsTranslateText="否">
+  <CardMap CardName="文本翻译" ModuleConfigFile="Data/FileTranslate.xml" />
+  <TranslateMap Name="中文-日文" />
+</MotionManage>

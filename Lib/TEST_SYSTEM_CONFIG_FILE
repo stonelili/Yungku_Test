@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<OfilmTester>
+  <CmdDefines />
+  <Commands CmdMode="0" EnCodeMode="0">
+    <Command Name="Open" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="0" SiteNo="1" />
+    <Command Name="Close" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="2" SiteNo="1" />
+    <Command Name="White" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="3" />
+    <Command Name="Black" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="4" />
+    <Command Name="MES" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="1" />
+    <Command Name="工单号" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="8" SiteNo="0" />
+    <Command Name="刷新结果" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="4" SiteNo="1" />
+  </Commands>
+  <Modules>
+    <ModuleGroup Name="TestProduct0" Ip="192.168.1.101" Port="41589" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" IsServer="否">
+      <Module Name="Unname" ModuleID="0" />
+    </ModuleGroup>
+    <ModuleGroup Name="TestProduct1" Ip="192.168.1.101" Port="41590" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct2" Ip="192.168.1.101" Port="41591" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct3" Ip="192.168.1.101" Port="41592" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct4" Ip="192.168.1.102" Port="41589" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct5" Ip="192.168.1.102" Port="41590" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct6" Ip="192.168.1.102" Port="41591" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="TestProduct7" Ip="192.168.1.102" Port="41592" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct0" Ip="192.168.1.101" Port="20000" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct1" Ip="192.168.1.101" Port="20001" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct2" Ip="192.168.1.101" Port="20002" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct3" Ip="192.168.1.101" Port="20003" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct4" Ip="192.168.1.102" Port="20004" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct5" Ip="192.168.1.102" Port="20005" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct6" Ip="192.168.1.102" Port="20006" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+    <ModuleGroup Name="OtpProduct7" Ip="192.168.1.102" Port="20007" AppendNewLine="是" CheckConnectionStatus="是" CheckSendString=" " MaxReconnCount="10" IsServer="否" />
+  </Modules>
+</OfilmTester>

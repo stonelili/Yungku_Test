@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<OfilmTester>
+  <Commands>
+    <Command Name="开始" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="0" SiteNo="0" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="结束" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="2" SiteNo="0" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="点亮" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="1" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="平行光管测试1" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="2" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="平行光管测试2" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="3" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="平行光管测试3" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="4" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="脏污测试" Timeout="60" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="5" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="RGB测试" Timeout="10" Type="YungkuSystem.Tester.Module.Command.OfilmBaseCommand" CmdNo="1" SiteNo="6" ReverseSiteNoAndModuleNo="否" />
+    <Command Name="Uname" Timeout="60" Type="YungkuSystem.Tester.Module.Command.CustomBaseCommand" SendStr="" ReceiveStr="" />
+    <Command Name="Uname" Timeout="60" Type="YungkuSystem.Tester.Module.Command.SRCPBaseCommand" FuncName="未命名" IsServer="否" />
+  </Commands>
+  <Modules>
+    <ModuleGroup Name="Product0" Ip="127.0.0.1" Port="8888" AppendNewLine="是" CheckConnectionStatus="否" CheckSendString=" " MaxReconnCount="10" MaxNumServerConnections="1" IsServer="否" EncodingMode="0" CapacitySize="1024" />
+  </Modules>
+</OfilmTester>

@@ -1,0 +1,609 @@
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Windows.Forms;
+using YungkuSystem.Globalization;
+
+namespace Yungku.BNU01_V1.Handler.Pages
+{
+    /// <summary>
+    /// FormAuto的统计功能扩展部分
+    /// </summary>
+    public partial class FormAuto
+    {
+        // 左右工位统计数据
+        private int leftStationTotal = 0;
+        private int leftStationPass = 0;
+        private int leftStationFail = 0;
+        private int rightStationTotal = 0;
+        private int rightStationPass = 0;
+        private int rightStationFail = 0;
+
+        // 统计UI控件
+        private Panel panelStatistics;
+        private TableLayoutPanel tlpStatistics;
+        private Panel pnlLeftStats, pnlRightStats, pnlSystemStatus;
+        private Label lblLeftTitle, lblRightTitle, lblSystemTitle;
+        private Label lblLeftTotal, lblLeftTotalValue;
+        private Label lblLeftPass, lblLeftPassValue;
+        private Label lblLeftFail, lblLeftFailValue;
+        private Label lblLeftYield, lblLeftYieldValue;
+        private Label lblRightTotal, lblRightTotalValue;
+        private Label lblRightPass, lblRightPassValue;
+        private Label lblRightFail, lblRightFailValue;
+        private Label lblRightYield, lblRightYieldValue;
+
+        // 右键菜单
+        private ContextMenuStrip cmsStatsLeft;
+        private ContextMenuStrip cmsStatsRight;
+
+        /// <summary>
+        /// 初始化统计面板 - 带适度美化
+        /// </summary>
+        private void InitializeStatisticsPanel()
+        {
+            // 创建主统计面板
+            panelStatistics = new Panel
+            {
+                BackColor = Color.FromArgb(45, 45, 45),
+                Dock = DockStyle.Fill,
+                Padding = new Padding(5)
+            };
+
+            // 创建TableLayoutPanel用于自动布局
+            tlpStatistics = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 3,
+                BackColor = Color.Transparent,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.None
+            };
+
+            // 设置行样式
+            tlpStatistics.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tlpStatistics.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            tlpStatistics.RowStyles.Add(new RowStyle(SizeType.Absolute, 90F));
+            tlpStatistics.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+
+            // 创建右键菜单
+            CreateLeftStationContextMenu();
+            CreateRightStationContextMenu();
+
+            // 创建左工位统计面板
+            pnlLeftStats = CreateStatsPanel(G.Text("左工位统计"), cmsStatsLeft);
+
+            // 创建右工位统计面板
+            pnlRightStats = CreateStatsPanel(G.Text("右工位统计"), cmsStatsRight);
+
+            // 创建系统状态面板
+            pnlSystemStatus = CreateStatsPanel(G.Text("系统状态"), null);
+
+            // 初始化左工位统计标签
+            InitializeStationLabels(pnlLeftStats,
+                 out lblLeftTotal, out lblLeftTotalValue,
+           out lblLeftPass, out lblLeftPassValue,
+            out lblLeftFail, out lblLeftFailValue,
+               out lblLeftYield, out lblLeftYieldValue);
+
+            // 初始化右工位统计标签
+            InitializeStationLabels(pnlRightStats,
+                  out lblRightTotal, out lblRightTotalValue,
+                out lblRightPass, out lblRightPassValue,
+                 out lblRightFail, out lblRightFailValue,
+              out lblRightYield, out lblRightYieldValue);
+
+            // 将面板添加到TableLayoutPanel
+            tlpStatistics.Controls.Add(pnlLeftStats, 0, 0);
+            tlpStatistics.Controls.Add(pnlRightStats, 0, 1);
+            tlpStatistics.Controls.Add(pnlSystemStatus, 0, 2);
+
+            // 将TableLayoutPanel添加到主面板
+            panelStatistics.Controls.Add(tlpStatistics);
+        }
+
+        /// <summary>
+        /// 创建统计面板 - 带边框和阴影效果
+        /// </summary>
+        private Panel CreateStatsPanel(string title, ContextMenuStrip contextMenu)
+        {
+            Panel panel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Margin = new Padding(4),
+                BackColor = Color.FromArgb(55, 55, 55),
+                ContextMenuStrip = contextMenu
+            };
+
+            // 添加Paint事件绘制边框
+            panel.Paint += (sender, e) =>
+                    {
+                        Graphics g = e.Graphics;
+                        g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                        // 绘制左侧装饰线
+                        using (Pen accentPen = new Pen(Color.FromArgb(0, 122, 204), 3))
+                        {
+                            g.DrawLine(accentPen, 0, 0, 0, panel.Height);
+                        }
+
+                        // 绘制底部细线
+                        using (Pen borderPen = new Pen(Color.FromArgb(70, 70, 70), 1))
+                        {
+                            g.DrawLine(borderPen, 0, panel.Height - 1, panel.Width, panel.Height - 1);
+                        }
+                    };
+
+            // 添加标题标签
+            Label lblTitle = new Label
+            {
+                Text = title,
+                Font = new Font("微软雅黑", 10F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 220, 220),
+                BackColor = Color.Transparent,
+                Location = new Point(12, 8),
+                AutoSize = true
+            };
+            panel.Controls.Add(lblTitle);
+
+            return panel;
+        }
+
+        /// <summary>
+        /// 创建左工位右键菜单
+        /// </summary>
+        private void CreateLeftStationContextMenu()
+        {
+            cmsStatsLeft = new ContextMenuStrip();
+
+            ToolStripMenuItem tsmiClearLeft = new ToolStripMenuItem
+            {
+                Text = G.Text("清空左工位统计"),
+                BackColor = Color.FromArgb(255, 128, 0),
+                ForeColor = Color.FromArgb(0, 0, 192)
+            };
+            tsmiClearLeft.Click += ClearLeftStationStats;
+
+            ToolStripMenuItem tsmiClearAll = new ToolStripMenuItem
+            {
+                Text = G.Text("清空全部统计"),
+                BackColor = Color.Yellow,
+                ForeColor = Color.Red
+            };
+            tsmiClearAll.Click += ClearAllStationStats;
+
+            cmsStatsLeft.Items.Add(tsmiClearLeft);
+            cmsStatsLeft.Items.Add(new ToolStripSeparator());
+            cmsStatsLeft.Items.Add(tsmiClearAll);
+        }
+
+        /// <summary>
+        /// 创建右工位右键菜单
+        /// </summary>
+        private void CreateRightStationContextMenu()
+        {
+            cmsStatsRight = new ContextMenuStrip();
+
+            ToolStripMenuItem tsmiClearRight = new ToolStripMenuItem
+            {
+                Text = G.Text("清空右工位统计"),
+                BackColor = Color.FromArgb(255, 128, 0),
+                ForeColor = Color.FromArgb(0, 0, 192)
+            };
+            tsmiClearRight.Click += ClearRightStationStats;
+
+            ToolStripMenuItem tsmiClearAll = new ToolStripMenuItem
+            {
+                Text = G.Text("清空全部统计"),
+                BackColor = Color.Yellow,
+                ForeColor = Color.Red
+            };
+            tsmiClearAll.Click += ClearAllStationStats;
+
+            cmsStatsRight.Items.Add(tsmiClearRight);
+            cmsStatsRight.Items.Add(new ToolStripSeparator());
+            cmsStatsRight.Items.Add(tsmiClearAll);
+        }
+
+        /// <summary>
+        /// 初始化某个工位的统计标签 - 带背景色块
+        /// </summary>
+        private void InitializeStationLabels(Panel panel,
+ out Label lblTotal, out Label lblTotalValue,
+    out Label lblPass, out Label lblPassValue,
+   out Label lblFail, out Label lblFailValue,
+   out Label lblYield, out Label lblYieldValue)
+        {
+            Font labelFont = new Font("微软雅黑", 9F, FontStyle.Regular);
+            Font valueFont = new Font("微软雅黑", 14F, FontStyle.Bold);
+            Color labelColor = Color.FromArgb(180, 180, 180);
+            Color valueColor = Color.White;
+
+            int yStart = 38;
+            int yOffset = 38;
+            int panelWidth = 320;
+
+            // 总数
+            Panel pnlTotal = CreateStatItemPanel(yStart, panelWidth, Color.FromArgb(0, 122, 204));
+            lblTotal = CreateStatLabel(G.Text("总数"), 12, 8, labelFont, labelColor);
+            lblTotalValue = CreateStatLabel("0", 80, 5, valueFont, valueColor);
+            lblTotalValue.TextAlign = ContentAlignment.MiddleRight;
+            lblTotalValue.Width = panelWidth - 90;
+            lblTotalValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlTotal.Controls.Add(lblTotal);
+            pnlTotal.Controls.Add(lblTotalValue);
+            panel.Controls.Add(pnlTotal);
+
+            // 良品数
+            Panel pnlPass = CreateStatItemPanel(yStart + yOffset, panelWidth, Color.FromArgb(16, 185, 129));
+            lblPass = CreateStatLabel(G.Text("良品"), 12, 8, labelFont, labelColor);
+            lblPassValue = CreateStatLabel("0", 80, 5, valueFont, Color.FromArgb(16, 185, 129));
+            lblPassValue.TextAlign = ContentAlignment.MiddleRight;
+            lblPassValue.Width = panelWidth - 90;
+            lblPassValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlPass.Controls.Add(lblPass);
+            pnlPass.Controls.Add(lblPassValue);
+            panel.Controls.Add(pnlPass);
+
+            // 不良数
+            Panel pnlFail = CreateStatItemPanel(yStart + yOffset * 2, panelWidth, Color.FromArgb(239, 68, 68));
+            lblFail = CreateStatLabel(G.Text("不良"), 12, 8, labelFont, labelColor);
+            lblFailValue = CreateStatLabel("0", 80, 5, valueFont, Color.FromArgb(239, 68, 68));
+            lblFailValue.TextAlign = ContentAlignment.MiddleRight;
+            lblFailValue.Width = panelWidth - 90;
+            lblFailValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFail.Controls.Add(lblFail);
+            pnlFail.Controls.Add(lblFailValue);
+            panel.Controls.Add(pnlFail);
+
+            // 良率
+            Panel pnlYield = CreateStatItemPanel(yStart + yOffset * 3, panelWidth, Color.FromArgb(245, 158, 11));
+            lblYield = CreateStatLabel(G.Text("良率"), 12, 8, labelFont, labelColor);
+            lblYieldValue = CreateStatLabel("0.00%", 80, 5, valueFont, Color.FromArgb(245, 158, 11));
+            lblYieldValue.TextAlign = ContentAlignment.MiddleRight;
+            lblYieldValue.Width = panelWidth - 90;
+            lblYieldValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlYield.Controls.Add(lblYield);
+            pnlYield.Controls.Add(lblYieldValue);
+            panel.Controls.Add(pnlYield);
+        }
+
+        /// <summary>
+        /// 创建统计项面板 - 带背景色和左侧色条
+        /// </summary>
+        private Panel CreateStatItemPanel(int y, int width, Color accentColor)
+        {
+            Panel panel = new Panel
+            {
+                Location = new Point(10, y),
+                Size = new Size(width, 32),
+                BackColor = Color.FromArgb(48, 48, 48)
+            };
+
+            // 绘制左侧色条
+            panel.Paint += (sender, e) =>
+ {
+     Graphics g = e.Graphics;
+     using (SolidBrush brush = new SolidBrush(accentColor))
+     {
+         g.FillRectangle(brush, 0, 0, 4, panel.Height);
+     }
+ };
+
+            return panel;
+        }
+
+        /// <summary>
+        /// 创建统计标签
+        /// </summary>
+        private Label CreateStatLabel(string text, int x, int y, Font font, Color foreColor)
+        {
+            return new Label
+            {
+                Text = text,
+                Location = new Point(x, y),
+                AutoSize = false,
+                Height = 22,
+                Font = font,
+                ForeColor = foreColor,
+                BackColor = Color.Transparent
+            };
+        }
+
+        /// <summary>
+        /// 将统计面板添加到窗体
+        /// </summary>
+        private void AddStatisticsPanelToForm()
+        {
+            if (panelStatistics != null)
+            {
+                // 检查splitfunction.Panel1中是否已存在的统计面板
+                foreach (Control ctrl in splitfunction.Panel1.Controls)
+                {
+                    if (ctrl is Panel && ctrl.Name == "panelStatistics")
+                    {
+                        splitfunction.Panel1.Controls.Remove(ctrl);
+                        break;
+                    }
+                }
+
+                panelStatistics.Name = "panelStatistics";
+                splitfunction.Panel1.Controls.Add(panelStatistics);
+                panelStatistics.BringToFront();
+
+                // 将系统状态控件添加到pnlSystemStatus中
+                RelocateSystemStatusControls();
+            }
+        }
+
+        /// <summary>
+        /// 重新定位系统状态控件
+        /// </summary>
+        private void RelocateSystemStatusControls()
+        {
+            if (pnlSystemStatus == null) return;
+
+            // 清空面板中可能存在的控件（除了标题）
+            foreach (Control ctrl in pnlSystemStatus.Controls.Cast<Control>().ToList())
+            {
+                if (ctrl is Label && ((Label)ctrl).Font.Bold)
+                    continue; // 保留标题
+                pnlSystemStatus.Controls.Remove(ctrl);
+            }
+
+            // 定位MES连接LED和标签
+            if (ledMESConnect != null)
+            {
+                ledMESConnect.Location = new Point(15, 40);
+                ledMESConnect.Size = new Size(30, 30);
+                pnlSystemStatus.Controls.Add(ledMESConnect);
+            }
+            if (lblledMESConnect_C != null)
+            {
+                lblledMESConnect_C.Location = new Point(50, 45);
+                lblledMESConnect_C.AutoSize = false;
+                lblledMESConnect_C.Size = new Size(110, 20);
+                lblledMESConnect_C.Font = new Font("微软雅黑", 9F);
+                lblledMESConnect_C.ForeColor = Color.FromArgb(180, 180, 180);
+                lblledMESConnect_C.BackColor = Color.Transparent;
+                pnlSystemStatus.Controls.Add(lblledMESConnect_C);
+            }
+
+            // 定位加密狗剩余时间标签
+            if (lblSuperDogLiveDays != null)
+            {
+                lblSuperDogLiveDays.Location = new Point(170, 40);
+                lblSuperDogLiveDays.AutoSize = false;
+                lblSuperDogLiveDays.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                lblSuperDogLiveDays.Font = new Font("微软雅黑", 10F, FontStyle.Bold);
+                lblSuperDogLiveDays.ForeColor = Color.FromArgb(100, 200, 255);
+                lblSuperDogLiveDays.BackColor = Color.Transparent;
+                lblSuperDogLiveDays.TextAlign = ContentAlignment.MiddleCenter;
+                lblSuperDogLiveDays.Width = pnlSystemStatus.Width - 180;
+
+                pnlSystemStatus.Controls.Add(lblSuperDogLiveDays);
+            }
+
+            // 隐藏不再使用的控件
+            if (ledTestConnect != null) ledTestConnect.Visible = false;
+            if (lblledTestConnect_E != null) lblledTestConnect_E.Visible = false;
+            if (lblledTestConnect_C != null) lblledTestConnect_C.Visible = false;
+            if (lblledMESConnect_E != null) lblledMESConnect_E.Visible = false;
+        }
+
+        /// <summary>
+        /// 更新左工位统计数据（带更新标志）
+        /// </summary>
+        public void UpdateLeftStationTest(int index, string testName, string testResult, bool updateStats)
+        {
+            UpdateLeftStationTest(index, testName, testResult);
+
+            if (updateStats)
+            {
+                UpdateLeftStationStatistics(testResult);
+            }
+        }
+
+        /// <summary>
+        /// 更新右工位统计数据（带更新标志）
+        /// </summary>
+        public void UpdateRightStationTest(int index, string testName, string testResult, bool updateStats)
+        {
+            UpdateRightStationTest(index, testName, testResult);
+
+            if (updateStats)
+            {
+                UpdateRightStationStatistics(testResult);
+            }
+        }
+
+        /// <summary>
+        /// 更新左工位统计信息
+        /// </summary>
+        private void UpdateLeftStationStatistics(string testResult)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => UpdateLeftStationStatistics(testResult)));
+                return;
+            }
+
+            leftStationTotal++;
+
+            if (testResult.Contains("PASS") || testResult.Contains("通过") || testResult.Contains("OK"))
+            {
+                leftStationPass++;
+            }
+            else if (testResult.Contains("FAIL") || testResult.Contains("失败") || testResult.Contains("NG"))
+            {
+                leftStationFail++;
+            }
+
+            UpdateLeftStationDisplay();
+        }
+
+        /// <summary>
+        /// 更新右工位统计信息
+        /// </summary>
+        private void UpdateRightStationStatistics(string testResult)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() => UpdateRightStationStatistics(testResult)));
+                return;
+            }
+
+            rightStationTotal++;
+
+            if (testResult.Contains("PASS") || testResult.Contains("通过") || testResult.Contains("OK"))
+            {
+                rightStationPass++;
+            }
+            else if (testResult.Contains("FAIL") || testResult.Contains("失败") || testResult.Contains("NG"))
+            {
+                rightStationFail++;
+            }
+
+            UpdateRightStationDisplay();
+        }
+
+        /// <summary>
+        /// 更新左工位显示
+        /// </summary>
+        private void UpdateLeftStationDisplay()
+        {
+            if (lblLeftTotalValue != null)
+            {
+                lblLeftTotalValue.Text = leftStationTotal.ToString();
+                lblLeftPassValue.Text = leftStationPass.ToString();
+                lblLeftFailValue.Text = leftStationFail.ToString();
+
+                double yield = leftStationTotal > 0 ? (leftStationPass * 100.0 / leftStationTotal) : 0;
+                lblLeftYieldValue.Text = yield.ToString("F2") + "%";
+
+                // 根据良率改变颜色
+                if (yield >= 95)
+                {
+                    lblLeftYieldValue.ForeColor = Color.FromArgb(16, 185, 129);
+                }
+                else if (yield >= 85)
+                {
+                    lblLeftYieldValue.ForeColor = Color.FromArgb(245, 158, 11);
+                }
+                else
+                {
+                    lblLeftYieldValue.ForeColor = Color.FromArgb(239, 68, 68);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 更新右工位显示
+        /// </summary>
+        private void UpdateRightStationDisplay()
+        {
+            if (lblRightTotalValue != null)
+            {
+                lblRightTotalValue.Text = rightStationTotal.ToString();
+                lblRightPassValue.Text = rightStationPass.ToString();
+                lblRightFailValue.Text = rightStationFail.ToString();
+
+                double yield = rightStationTotal > 0 ? (rightStationPass * 100.0 / rightStationTotal) : 0;
+                lblRightYieldValue.Text = yield.ToString("F2") + "%";
+
+                // 根据良率改变颜色
+                if (yield >= 95)
+                {
+                    lblRightYieldValue.ForeColor = Color.FromArgb(16, 185, 129);
+                }
+                else if (yield >= 85)
+                {
+                    lblRightYieldValue.ForeColor = Color.FromArgb(245, 158, 11);
+                }
+                else
+                {
+                    lblRightYieldValue.ForeColor = Color.FromArgb(239, 68, 68);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 清空左工位统计数据
+        /// </summary>
+        private void ClearLeftStationStats(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(G.Text("确认要清空左工位统计数据吗？"), G.Text("确认"),
+           MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                leftStationTotal = 0;
+                leftStationPass = 0;
+                leftStationFail = 0;
+                UpdateLeftStationDisplay();
+                ClearLeftStationTests();
+                MyApp.GetInstance().Logger.WriteRecord(G.Text("左工位统计数据已清空"));
+            }
+        }
+
+        /// <summary>
+        /// 清空右工位统计数据
+        /// </summary>
+        private void ClearRightStationStats(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(G.Text("确认要清空右工位统计数据吗？"), G.Text("确认"),
+             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                rightStationTotal = 0;
+                rightStationPass = 0;
+                rightStationFail = 0;
+                UpdateRightStationDisplay();
+                ClearRightStationTests();
+                MyApp.GetInstance().Logger.WriteRecord(G.Text("右工位统计数据已清空"));
+            }
+        }
+
+        /// <summary>
+        /// 清空所有工位统计数据
+        /// </summary>
+        private void ClearAllStationStats(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(G.Text("确认要清空所有统计数据吗？"), G.Text("确认"),
+        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                leftStationTotal = 0;
+                leftStationPass = 0;
+                leftStationFail = 0;
+                rightStationTotal = 0;
+                rightStationPass = 0;
+                rightStationFail = 0;
+                UpdateLeftStationDisplay();
+                UpdateRightStationDisplay();
+                ClearLeftStationTests();
+                ClearRightStationTests();
+                MyApp.GetInstance().Logger.WriteRecord(G.Text("所有工位统计数据已清空"));
+            }
+        }
+
+        /// <summary>
+        /// 获取左工位统计数据
+        /// </summary>
+        public void GetLeftStationStatistics(out int total, out int pass, out int fail, out double yield)
+        {
+            total = leftStationTotal;
+            pass = leftStationPass;
+            fail = leftStationFail;
+            yield = leftStationTotal > 0 ? (leftStationPass * 100.0 / leftStationTotal) : 0;
+        }
+
+        /// <summary>
+        /// 获取右工位统计数据
+        /// </summary>
+        public void GetRightStationStatistics(out int total, out int pass, out int fail, out double yield)
+        {
+            total = rightStationTotal;
+            pass = rightStationPass;
+            fail = rightStationFail;
+            yield = rightStationTotal > 0 ? (rightStationPass * 100.0 / rightStationTotal) : 0;
+        }
+    }
+}

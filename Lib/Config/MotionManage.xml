@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage GlobalVelocityScale="1">
+  <CardMap CardIndex="0" CardName="正运动轴卡" DllFileName="YungkuSystem.Devices.dll" ModuleConfigFile="Config/ZMotion.xml" />
+  <AxisMap CardIndex="0" AxisIndex="0" MapName="X轴" Scale="1000" IsServoMotor="1" DirRvs="0" DirEncode="0" StartVel="10" MaxSpeed="400" Vel="100" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="14" HomeStartVel="10" HomeVel="20" HomeOffset="1" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <AxisMap CardIndex="0" AxisIndex="1" MapName="Y轴" Scale="2000" IsServoMotor="1" DirRvs="0" DirEncode="0" StartVel="20" MaxSpeed="1200" Vel="200" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CW" HomeMode="13" HomeStartVel="10" HomeVel="50" HomeOffset="1" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <AxisMap CardIndex="0" AxisIndex="2" MapName="Z轴" Scale="2500" IsServoMotor="1" DirRvs="0" DirEncode="0" StartVel="10" MaxSpeed="1200" Vel="200" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="14" HomeStartVel="10" HomeVel="20" HomeOffset="-1" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <AxisMap CardIndex="0" AxisIndex="3" MapName="R轴" Scale="277.777777778" IsServoMotor="1" DirRvs="0" DirEncode="0" StartVel="10" MaxSpeed="1200" Vel="100" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="13" HomeStartVel="10" HomeVel="20" HomeOffset="3" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="双启动按钮左" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="双启动按钮右" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="安全门" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="三色灯绿" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="6" MapName="门气缸原位阀" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="三色灯黄" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="三色灯红" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="蜂鸣器" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="PASS灯" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="5" MapName="FAIL灯" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="20" MapName="门气缸原位" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="21" MapName="门气缸动位" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="22" MapName="治具关盖检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="复位按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="停止按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="7" MapName="门气缸动位阀" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="9" MapName="测试板供电" IOType="Output" />
+</MotionManage>

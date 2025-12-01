@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage Port="4" BaudRate="115200" ReadTimeout="2000" SendTimeout="1000" AxisInPutNumber="3" AxisNumber="2" AxisOutPutNumber="3" OutPutNumber="8" InPutNumber="8">
+</MotionManage>

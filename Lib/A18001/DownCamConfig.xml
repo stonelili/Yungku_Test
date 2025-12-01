@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<Script>
+  <DeviceRoot Type="Yungku.Script.Devices.DeviceRoot" Assembly="Yungku.Script.DLL" Name="我的设备" Enabled="开" OutLog="关" ExternalDebug="否" />
+  <ActionRoot Type="Yungku.Script.Actions.ActionRoot" Assembly="Yungku.Script.DLL" Name="动作列表" Enabled="开" OutLog="关" ExternalDebug="否" />
+</Script>

@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage>
+  <TranslateMap Name="中文-英文" FilePath="Data/ChaneseToEnglish.xml" />
+  <TranslateMap Name="中文-日文" FilePath="Data/ChaneseToJapanese.xml" />
+</MotionManage>

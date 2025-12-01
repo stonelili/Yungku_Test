@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Machine xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>Machine</Name>
+  <Enabled>true</Enabled>
+  <TestItems>
+    <BaseObject xsi:type="Turntable">
+      <Name>Turntable0</Name>
+      <Enabled>true</Enabled>
+      <TestItems>
+        <BaseObject xsi:type="Head">
+          <Name>Head0</Name>
+          <Enabled>true</Enabled>
+          <TestItems>
+            <BaseObject xsi:type="Jig">
+              <Name>Jig0</Name>
+              <Enabled>true</Enabled>
+              <TestItems>
+                <BaseObject xsi:type="Product">
+                  <Name>Product0</Name>
+                  <Enabled>true</Enabled>
+                  <TestItems>
+                    <BaseObject xsi:type="Module">
+                      <Name>Module0</Name>
+                      <Enabled>true</Enabled>
+                      <TestItems />
+                      <AutoItems />
+                      <Properties />
+                    </BaseObject>
+                  </TestItems>
+                  <AutoItems />
+                  <Properties />
+                </BaseObject>
+              </TestItems>
+              <AutoItems />
+              <Properties />
+            </BaseObject>
+          </TestItems>
+          <AutoItems />
+          <Properties />
+        </BaseObject>
+      </TestItems>
+      <AutoItems />
+      <Properties />
+      <Stations>
+        <Station>
+          <Name>Station0</Name>
+          <Enabled>true</Enabled>
+          <TestItems />
+          <AutoItems />
+          <Properties>
+            <item>
+              <key>
+                <string>ConfigFile</string>
+              </key>
+              <value>
+                <string>Turntable0_Station0_ConfigFile</string>
+              </value>
+            </item>
+          </Properties>
+        </Station>
+        <Station>
+          <Name>Station1</Name>
+          <Enabled>true</Enabled>
+          <TestItems />
+          <AutoItems />
+          <Properties>
+            <item>
+              <key>
+                <string>ConfigFile</string>
+              </key>
+              <value>
+                <string>Turntable0_Station1_ConfigFile</string>
+              </value>
+            </item>
+          </Properties>
+        </Station>
+      </Stations>
+      <Width>33</Width>
+      <Height>50</Height>
+      <Speed>5</Speed>
+      <CcwRotation>
+        <Value>true</Value>
+      </CcwRotation>
+      <Distanceheight>0</Distanceheight>
+      <BeforeAngle>0</BeforeAngle>
+      <LengthPix>30</LengthPix>
+      <StationNoIsInt>
+        <Value>true</Value>
+      </StationNoIsInt>
+      <HeadNoIsInt>
+        <Value>true</Value>
+      </HeadNoIsInt>
+    </BaseObject>
+  </TestItems>
+  <AutoItems />
+  <Properties />
+</Machine>

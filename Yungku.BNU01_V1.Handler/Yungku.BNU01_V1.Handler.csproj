@@ -1,0 +1,484 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3244D2DA-B180-4791-8676-02763F7DE7B4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Yungku.BNU01_V1.Handler</RootNamespace>
+    <AssemblyName>Yungku.BNU01_V1.Handler</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>发布\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Lib\</OutputPath>
+    <DefineConstants>TRACE;DEBUG; </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>res\小黄人.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Yungku.BNU01_V1.Handler.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Charts.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Charts.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.CodeParser.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.CodeParser.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Data.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.DataAccess.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.DataAccess.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.DataAccess.v15.2.UI, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.DataAccess.v15.2.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Office.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Office.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Pdf.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Pdf.v15.2.Drawing, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Pdf.v15.2.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Printing.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.RichEdit.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.RichEdit.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Sparkline.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Sparkline.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Spreadsheet.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Spreadsheet.v15.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Utils.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v15.2.UI, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Utils.v15.2.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Xpo.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.Xpo.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraBars.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraBars.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraCharts.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraCharts.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraEditors.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraEditors.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraGrid.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraGrid.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraLayout.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraLayout.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraNavBar.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraNavBar.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPdfViewer.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraPdfViewer.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraPrinting.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraPrinting.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraRichEdit.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraSpreadsheet.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraSpreadsheet.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraTreeList.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraTreeList.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraVerticalGrid.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraVerticalGrid.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraWizard.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DevExpress.XtraWizard.v15.2.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.WinForms, Version=0.9.7.1, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\LiveCharts.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.VisualBasic.PowerPacks.Vs.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="YungkuSystem, Version=2.5.11.2517, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\YungkuSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="YungkuSystem.Devices, Version=2.5.10.2415, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\YungkuSystem.Devices.dll</HintPath>
+    </Reference>
+    <Reference Include="YungkuSystem.ExternalControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\YungkuSystem.ExternalControl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppParams.cs" />
+    <Compile Include="Config\CodeConfig.cs" />
+    <Compile Include="Config\AppConfig.cs" />
+    <Compile Include="Config\FunctionSwitch.cs" />
+    <Compile Include="Config\GeneralSettings.cs" />
+    <Compile Include="Config\MachineTestSettings.cs" />
+    <Compile Include="Config\TestConfig\HeadConfig.cs" />
+    <Compile Include="Config\TestConfig\ProductConfig.cs" />
+    <Compile Include="Config\TestConfig\TestSetting.cs" />
+    <Compile Include="ElectricCollimator.cs" />
+    <Compile Include="FileStore.cs" />
+    <Compile Include="FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Hardware.cs" />
+    <Compile Include="LightControl.cs" />
+    <Compile Include="Logic\Actions\ActionCommands.cs" />
+    <Compile Include="Logic\Actions\ActionHome.cs" />
+    <Compile Include="Logic\Actions\OtherAction\ActionHelper.cs" />
+    <Compile Include="Logic\Actions\OtherAction\ActionWatcher.cs" />
+    <Compile Include="Logic\Actions\LogicObject.cs" />
+    <Compile Include="Logic\Actions\ActionMain.cs" />
+    <Compile Include="Logic\Objects\MachineObject.cs" />
+    <Compile Include="Logic\Objects\TurntableObject.cs" />
+    <Compile Include="Logic\StationAction\ActionCalculator.cs" />
+    <Compile Include="Logic\StationAction\ActionCollimator.cs" />
+    <Compile Include="Logic\StationAction\ActionMove.cs" />
+    <Compile Include="Logic\StationAction\ActionObject.cs" />
+    <Compile Include="Logic\StationAction\ActionOpenTest.cs" />
+    <Compile Include="Logic\StationAction\ActionOutput.cs" />
+    <Compile Include="Logic\StationAction\ActionPositiveNegative.cs" />
+    <Compile Include="Logic\StationAction\ActionTest.cs" />
+    <Compile Include="Logic\Objects\HeadObject.cs" />
+    <Compile Include="Logic\Objects\JigObject.cs" />
+    <Compile Include="Logic\Objects\MachineBase.cs" />
+    <Compile Include="Logic\Objects\ProductObject.cs" />
+    <Compile Include="Logic\StationAction\ActionTestPosition.cs" />
+    <Compile Include="Logic\StationAction\ActionWaitIO.cs" />
+    <Compile Include="Logic\StationAction\ExampleStationAction.cs" />
+    <Compile Include="Logic\TestDisplayHelper.cs" />
+    <Compile Include="MyLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OfilmCommand.cs" />
+    <Compile Include="Pages\FormAdjustFocus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormAdjustFocus.designer.cs">
+      <DependentUpon>FormAdjustFocus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Other\SiteShareData.cs" />
+    <Compile Include="Pages\FormAuto.Statistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormDebug.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormDebug.Designer.cs">
+      <DependentUpon>FormDebug.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormFixMode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormFixMode.Designer.cs">
+      <DependentUpon>FormFixMode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormAdjustAxis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormAdjustAxis.Designer.cs">
+      <DependentUpon>FormAdjustAxis.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormManual.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormManual.designer.cs">
+      <DependentUpon>FormManual.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormAxisHandler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormAxisHandler.Designer.cs">
+      <DependentUpon>FormAxisHandler.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormSetting.designer.cs">
+      <DependentUpon>FormSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormSetup.designer.cs">
+      <DependentUpon>FormSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormUpdate.Designer.cs">
+      <DependentUpon>FormUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\IOListen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\IOListen.Designer.cs">
+      <DependentUpon>IOListen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MyApp.cs" />
+    <Compile Include="Pages\FormAuto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormAuto.Designer.cs">
+      <DependentUpon>FormAuto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\FormLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\FormLogin.Designer.cs">
+      <DependentUpon>FormLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Permissions.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\ActionCalculatorTests.cs" />
+    <Compile Include="YYSCommand.cs" />
+    <EmbeddedResource Include="FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormMain.ru.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormAdjustFocus.resx">
+      <DependentUpon>FormAdjustFocus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormAuto.resx">
+      <DependentUpon>FormAuto.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormDebug.resx">
+      <DependentUpon>FormDebug.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormFixMode.resx">
+      <DependentUpon>FormFixMode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormAdjustAxis.resx">
+      <DependentUpon>FormAdjustAxis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormManual.resx">
+      <DependentUpon>FormManual.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormLogin.resx">
+      <DependentUpon>FormLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormAxisHandler.resx">
+      <DependentUpon>FormAxisHandler.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormSetting.ar.resx">
+      <DependentUpon>FormSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormSetting.resx">
+      <DependentUpon>FormSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormSetup.resx">
+      <DependentUpon>FormSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\FormUpdate.resx">
+      <DependentUpon>FormUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\IOListen.resx">
+      <DependentUpon>IOListen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include=".editorconfig" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\小黄人.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ykMachine.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tools\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

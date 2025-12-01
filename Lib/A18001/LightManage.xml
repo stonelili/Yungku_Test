@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage>
+  <ControlMap ControlIndex="0" CardName="YK光源" ModuleConfigFile="Config/YKLight-1.xml" />
+  <ControlMap ControlIndex="1" CardName="OTP光源" ModuleConfigFile="Config/YKLight-2.xml" />
+  <LightMap ControlIndex="0" ChanelIndex="0" ChanelValue="1000" MapName="调焦相机中心" />
+  <LightMap ControlIndex="0" ChanelIndex="1" ChanelValue="1000" MapName="调焦相机中心" />
+  <LightMap ControlIndex="0" ChanelIndex="2" ChanelValue="1000" MapName="调焦相机中心" />
+  <LightMap ControlIndex="0" ChanelIndex="0" ChanelValue="1000" MapName="调焦相机镭射" />
+  <LightMap ControlIndex="0" ChanelIndex="1" ChanelValue="1000" MapName="调焦相机镭射" />
+  <LightMap ControlIndex="0" ChanelIndex="2" ChanelValue="1000" MapName="调焦相机镭射" />
+  <LightMap ControlIndex="1" ChanelIndex="0" ChanelValue="1000" MapName="点胶相机中心" />
+  <LightMap ControlIndex="1" ChanelIndex="1" ChanelValue="1000" MapName="点胶相机中心" />
+  <LightMap ControlIndex="1" ChanelIndex="2" ChanelValue="1000" MapName="点胶相机中心" />
+  <LightMap ControlIndex="1" ChanelIndex="0" ChanelValue="1000" MapName="点胶相机检查" />
+  <LightMap ControlIndex="1" ChanelIndex="1" ChanelValue="1000" MapName="点胶相机检查" />
+  <LightMap ControlIndex="1" ChanelIndex="2" ChanelValue="1000" MapName="点胶相机检查" />
+  <LightMap ControlIndex="1" ChanelIndex="0" ChanelValue="1000" MapName="点胶相机校准" />
+  <LightMap ControlIndex="1" ChanelIndex="1" ChanelValue="1000" MapName="点胶相机校准" />
+  <LightMap ControlIndex="1" ChanelIndex="2" ChanelValue="1000" MapName="点胶相机校准" />
+  <LightMap ControlIndex="1" ChanelIndex="0" ChanelValue="1000" MapName="点胶相机镭射" />
+  <LightMap ControlIndex="1" ChanelIndex="1" ChanelValue="1000" MapName="点胶相机镭射" />
+  <LightMap ControlIndex="1" ChanelIndex="2" ChanelValue="1000" MapName="点胶相机镭射" />
+  <LightMap ControlIndex="0" ChanelIndex="3" ChanelValue="1000" MapName="较正相机产品" />
+  <LightMap ControlIndex="0" ChanelIndex="3" ChanelValue="1000" MapName="较正相机环" />
+  <LightMap ControlIndex="1" ChanelIndex="0" ChanelValue="1000" MapName="花瓣溢胶检查" />
+  <LightMap ControlIndex="1" ChanelIndex="1" ChanelValue="1000" MapName="花瓣溢胶检查" />
+  <LightMap ControlIndex="1" ChanelIndex="2" ChanelValue="1000" MapName="花瓣溢胶检查" />
+</MotionManage>

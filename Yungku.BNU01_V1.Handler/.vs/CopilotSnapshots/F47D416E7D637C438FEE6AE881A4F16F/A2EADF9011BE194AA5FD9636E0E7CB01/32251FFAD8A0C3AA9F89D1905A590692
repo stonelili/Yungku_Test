@@ -1,0 +1,470 @@
+﻿namespace Yungku.BNU01_V1.Handler.Pages
+{
+    partial class FormAuto
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.cmsMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiClearStatis = new System.Windows.Forms.ToolStripMenuItem();
+            this.显示统计信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsLogContext = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiClearLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSelectLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.当前另存为ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tmrUpdateUI = new System.Windows.Forms.Timer(this.components);
+            this.cmsWorkTray = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiSetWaitTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetWaitToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetEmptyTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetEmptyToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetPassToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetPassToAllGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetEmptyToBeforeGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetEmptyToAfterGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tool = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetWaitToBeforeGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetWaitToAfterGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetNoUsedToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.cmsFailTray = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnClearFailTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetEmptyToCurFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetNGToCurFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetFailToAllFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetAllowCodeToCurRowsGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetAllowCodeToCurColsGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsStatical = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.显示不良明细ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nG代码管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitMain = new System.Windows.Forms.SplitContainer();
+            this.lblProductName = new YungkuSystem.YKControls.Roll.YKRollText();
+            this.splitBase = new System.Windows.Forms.SplitContainer();
+            this.splitfunction = new System.Windows.Forms.SplitContainer();
+            this.lblledTestConnect_E = new System.Windows.Forms.Label();
+            this.lblledTestConnect_C = new System.Windows.Forms.Label();
+            this.ledTestConnect = new YungkuSystem.Controls.Led();
+            this.lblSuperDogLiveDays = new System.Windows.Forms.Label();
+            this.statisticalState1 = new YungkuSystem.Controls.StatisticalState();
+            this.splitLogAndSatate = new System.Windows.Forms.SplitContainer();
+            this.ykTabLog = new YungkuSystem.YKControls.Tab.YKTabControlExt();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.lvLog = new YungkuSystem.Controls.YSListView();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.lvAlarms = new YungkuSystem.Controls.YSListView();
+            this.tabPageTestResults = new System.Windows.Forms.TabPage();
+            this.splitTestResults = new System.Windows.Forms.SplitContainer();
+            this.lvLeftStationTest = new YungkuSystem.Controls.YSListView();
+            this.lvRightStationTest = new YungkuSystem.Controls.YSListView();
+            this.cmsMain.SuspendLayout();
+            this.cmsLogContext.SuspendLayout();
+            this.cmsWorkTray.SuspendLayout();
+            this.cmsFailTray.SuspendLayout();
+            this.cmsStatical.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
+            this.splitMain.Panel1.SuspendLayout();
+            this.splitMain.Panel2.SuspendLayout();
+            this.splitMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitBase)).BeginInit();
+            this.splitBase.Panel1.SuspendLayout();
+            this.splitBase.Panel2.SuspendLayout();
+            this.splitBase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitfunction)).BeginInit();
+            this.splitfunction.Panel1.SuspendLayout();
+            this.splitfunction.Panel2.SuspendLayout();
+            this.splitfunction.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitLogAndSatate)).BeginInit();
+            this.splitLogAndSatate.Panel2.SuspendLayout();
+            this.splitLogAndSatate.SuspendLayout();
+            this.ykTabLog.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.tabPageTestResults.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitTestResults)).BeginInit();
+            this.splitTestResults.Panel1.SuspendLayout();
+            this.splitTestResults.Panel2.SuspendLayout();
+            this.splitTestResults.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // cmsMain
+            // 
+            this.cmsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiClearStatis,
+            this.显示统计信息ToolStripMenuItem});
+            this.cmsMain.Name = "cmsMain";
+            this.cmsMain.Size = new System.Drawing.Size(149, 48);
+            // 
+            // tsmiClearStatis
+            // 
+            this.tsmiClearStatis.Name = "tsmiClearStatis";
+            this.tsmiClearStatis.Size = new System.Drawing.Size(148, 22);
+            this.tsmiClearStatis.Text = "清除统计数据";
+            // 
+            // 显示统计信息ToolStripMenuItem
+            // 
+            this.显示统计信息ToolStripMenuItem.Name = "显示统计信息ToolStripMenuItem";
+            this.显示统计信息ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.显示统计信息ToolStripMenuItem.Text = "显示统计信息";
+            // 
+            // cmsLogContext
+            // 
+            this.cmsLogContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.tsmiClearLogs,
+            this.tsmiSelectLogs,
+            this.当前另存为ToolStripMenuItem});
+            this.cmsLogContext.Name = "cmsLogContext";
+            this.cmsLogContext.Size = new System.Drawing.Size(149, 76);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(146, 6);
+            // 
+            // tsmiClearLogs
+            // 
+            this.tsmiClearLogs.Name = "tsmiClearLogs";
+            this.tsmiClearLogs.Size = new System.Drawing.Size(148, 22);
+            this.tsmiClearLogs.Text = "清除日志记录";
+            // 
+            // tsmiSelectLogs
+            // 
+            this.tsmiSelectLogs.Name = "tsmiSelectLogs";
+            this.tsmiSelectLogs.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSelectLogs.Text = "选择日志记录";
+            // 
+            // 当前另存为ToolStripMenuItem
+            // 
+            this.当前另存为ToolStripMenuItem.Name = "当前另存为ToolStripMenuItem";
+            this.当前另存为ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.当前另存为ToolStripMenuItem.Text = "当前另存为";
+            // 
+            // tmrUpdateUI
+            // 
+            this.tmrUpdateUI.Interval = 1000;
+            // 
+            // cmsWorkTray
+            // 
+            this.cmsWorkTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiSetWaitTray,
+            this.tsmiSetWaitToCurGrid,
+            this.toolStripSeparator1,
+            this.tsmiSetEmptyTray,
+            this.tsmiSetEmptyToCurGrid,
+            this.toolStripSeparator2,
+            this.tsmiSetPassToCurGrid,
+            this.tsmiSetPassToAllGrid,
+            this.toolStripSeparator3,
+            this.tsmiSetEmptyToBeforeGrid,
+            this.tsmiSetEmptyToAfterGrid,
+            this.tool,
+            this.tsmiSetWaitToBeforeGrid,
+            this.tsmiSetWaitToAfterGrid,
+            this.toolStripSeparator5,
+            this.tsmiSetNoUsedToCurGrid});
+            this.cmsWorkTray.Name = "cmsWorkTray";
+            this.cmsWorkTray.Size = new System.Drawing.Size(149, 298);
+            // 
+            // tsmiSetWaitTray
+            // 
+            this.tsmiSetWaitTray.Name = "tsmiSetWaitTray";
+            this.tsmiSetWaitTray.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetWaitTray.Text = "设为等待中";
+            // 
+            // tsmiSetWaitToCurGrid
+            // 
+            this.tsmiSetWaitToCurGrid.Name = "tsmiSetWaitToCurGrid";
+            this.tsmiSetWaitToCurGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetWaitToCurGrid.Text = "设置等待当前";
+            // 
+            // tsmiSetEmptyTray
+            // 
+            this.tsmiSetEmptyTray.Name = "tsmiSetEmptyTray";
+            this.tsmiSetEmptyTray.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetEmptyTray.Text = "设为空闲";
+            // 
+            // tsmiSetEmptyToCurGrid
+            // 
+            this.tsmiSetEmptyToCurGrid.Name = "tsmiSetEmptyToCurGrid";
+            this.tsmiSetEmptyToCurGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetEmptyToCurGrid.Text = "设置空闲当前";
+            // 
+            // tsmiSetPassToCurGrid
+            // 
+            this.tsmiSetPassToCurGrid.Name = "tsmiSetPassToCurGrid";
+            this.tsmiSetPassToCurGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetPassToCurGrid.Text = "设置通过当前";
+            // 
+            // tsmiSetPassToAllGrid
+            // 
+            this.tsmiSetPassToAllGrid.Name = "tsmiSetPassToAllGrid";
+            this.tsmiSetPassToAllGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetPassToAllGrid.Text = "设置通过所有";
+            // 
+            // tsmiSetEmptyToBeforeGrid
+            // 
+            this.tsmiSetEmptyToBeforeGrid.Name = "tsmiSetEmptyToBeforeGrid";
+            this.tsmiSetEmptyToBeforeGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetEmptyToBeforeGrid.Text = "设置空闲到前一个";
+            // 
+            // tsmiSetEmptyToAfterGrid
+            // 
+            this.tsmiSetEmptyToAfterGrid.Name = "tsmiSetEmptyToAfterGrid";
+            this.tsmiSetEmptyToAfterGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetEmptyToAfterGrid.Text = "设置空闲到后一个";
+            // 
+            // tsmiSetWaitToBeforeGrid
+            // 
+            this.tsmiSetWaitToBeforeGrid.Name = "tsmiSetWaitToBeforeGrid";
+            this.tsmiSetWaitToBeforeGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetWaitToBeforeGrid.Text = "设置等待到前一个";
+            // 
+            // tsmiSetWaitToAfterGrid
+            // 
+            this.tsmiSetWaitToAfterGrid.Name = "tsmiSetWaitToAfterGrid";
+            this.tsmiSetWaitToAfterGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetWaitToAfterGrid.Text = "设置等待到后一个";
+            // 
+            // tsmiSetNoUsedToCurGrid
+            // 
+            this.tsmiSetNoUsedToCurGrid.Name = "tsmiSetNoUsedToCurGrid";
+            this.tsmiSetNoUsedToCurGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetNoUsedToCurGrid.Text = "设置未使用当前";
+            // 
+            // cmsFailTray
+            // 
+            this.cmsFailTray.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnClearFailTray,
+            this.SetEmptyToCurFailGrid,
+            this.toolStripSeparator6,
+            this.tsmiSetNGToCurFailGrid,
+            this.SetFailToAllFailGrid,
+            this.toolStripSeparator7,
+            this.tsmiSetAllowCodeToCurRowsGrid,
+            this.tsmiSetAllowCodeToCurColsGrid,
+            this.toolStripSeparator8,
+            this.toolStripMenuItem7});
+            this.cmsFailTray.Name = "cmsFailTray";
+            this.cmsFailTray.Size = new System.Drawing.Size(149, 176);
+            // 
+            // btnClearFailTray
+            // 
+            this.btnClearFailTray.Name = "btnClearFailTray";
+            this.btnClearFailTray.Size = new System.Drawing.Size(148, 22);
+            this.btnClearFailTray.Text = "清除失败托盘";
+            // 
+            // SetEmptyToCurFailGrid
+            // 
+            this.SetEmptyToCurFailGrid.Name = "SetEmptyToCurFailGrid";
+            this.SetEmptyToCurFailGrid.Size = new System.Drawing.Size(148, 22);
+            this.SetEmptyToCurFailGrid.Text = "设置空闲当前";
+            // 
+            // tsmiSetNGToCurFailGrid
+            // 
+            this.tsmiSetNGToCurFailGrid.Name = "tsmiSetNGToCurFailGrid";
+            this.tsmiSetNGToCurFailGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetNGToCurFailGrid.Text = "设置不良当前";
+            // 
+            // SetFailToAllFailGrid
+            // 
+            this.SetFailToAllFailGrid.Name = "SetFailToAllFailGrid";
+            this.SetFailToAllFailGrid.Size = new System.Drawing.Size(148, 22);
+            this.SetFailToAllFailGrid.Text = "设置不良所有";
+            // 
+            // tsmiSetAllowCodeToCurRowsGrid
+            // 
+            this.tsmiSetAllowCodeToCurRowsGrid.Name = "tsmiSetAllowCodeToCurRowsGrid";
+            this.tsmiSetAllowCodeToCurRowsGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetAllowCodeToCurRowsGrid.Text = "设置允许代码当前行";
+            // 
+            // tsmiSetAllowCodeToCurColsGrid
+            // 
+            this.tsmiSetAllowCodeToCurColsGrid.Name = "tsmiSetAllowCodeToCurColsGrid";
+            this.tsmiSetAllowCodeToCurColsGrid.Size = new System.Drawing.Size(148, 22);
+            this.tsmiSetAllowCodeToCurColsGrid.Text = "设置允许代码当前列";
+            // 
+            // toolStripMenuItem7
+            // 
+            this.toolStripMenuItem7.Name = "toolStripMenuItem7";
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem7.Text = "显示不良图形";
+            // 
+            // cmsStatical
+            // 
+            this.cmsStatical.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem2,
+            this.显示不良明细ToolStripMenuItem,
+            this.nG代码管理ToolStripMenuItem});
+            this.cmsStatical.Name = "cmsStatical";
+            this.cmsStatical.Size = new System.Drawing.Size(149, 70);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItem2.Text = "统计报表";
+            // 
+            // 显示不良明细ToolStripMenuItem
+            // 
+            this.显示不良明细ToolStripMenuItem.Name = "显示不良明细ToolStripMenuItem";
+            this.显示不良明细ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.显示不良明细ToolStripMenuItem.Text = "显示不良明细";
+            // 
+            // nG代码管理ToolStripMenuItem
+            // 
+            this.nG代码管理ToolStripMenuItem.Name = "nG代码管理ToolStripMenuItem";
+            this.nG代码管理ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.nG代码管理ToolStripMenuItem.Text = "NG代码管理";
+            // 
+            // splitMain
+            // 
+            this.splitMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitMain.Location = new System.Drawing.Point(0, 0);
+            this.splitMain.Margin = new System.Windows.Forms.Padding(0);
+            this.splitMain.Name = "splitMain";
+            this.splitMain.Panel1.Controls.Add(this.lblProductName);
+            this.splitMain.Panel2.Controls.Add(this.splitLogAndSatate);
+            this.splitMain.Size = new System.Drawing.Size(1214, 800);
+            this.splitMain.SplitterDistance = 399;
+            this.splitMain.TabIndex = 0;
+            // 
+            // lblProductName
+            // 
+            this.lblProductName.BackColor = System.Drawing.Color.LightGray;
+            this.lblProductName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblProductName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblProductName.Location = new System.Drawing.Point(0, 0);
+            this.lblProductName.Margin = new System.Windows.Forms.Padding(0);
+            this.lblProductName.Name = "lblProductName";
+            this.lblProductName.Size = new System.Drawing.Size(399, 800);
+            this.lblProductName.TabIndex = 0;
+            this.lblProductName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // splitBase
+            // 
+            this.splitBase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitBase.Location = new System.Drawing.Point(0, 0);
+            this.splitBase.Margin = new System.Windows.Forms.Padding(0);
+            this.splitBase.Name = "splitBase";
+            this.splitBase.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitBase.Panel1
+            // 
+            this.splitBase.Panel1.Controls.Add(this.splitfunction);
+            // 
+            // splitBase.Panel2
+            // 
+            this.splitBase.Panel2.Controls.Add(this.splitMain);
+            this.splitBase.Size = new System.Drawing.Size(1214, 925);
+            this.splitBase.SplitterDistance = 119;
+            this.splitBase.TabIndex = 0;
+            // 
+            // splitfunction
+            // 
+            this.splitfunction.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitfunction.Location = new System.Drawing.Point(0, 0);
+            this.splitfunction.Margin = new System.Windows.Forms.Padding(0);
+            this.splitfunction.Name = "splitfunction";
+            this.splitfunction.Panel1.Controls.Add(this.lblledTestConnect_E);
+            this.splitfunction.Panel1.Controls.Add(this.lblledTestConnect_C);
+            this.splitfunction.Panel1.Controls.Add(this.ledTestConnect);
+            this.splitfunction.Panel1.Controls.Add(this.lblSuperDogLiveDays);
+            this.splitfunction.Panel1.Controls.Add(this.statisticalState1);
+            this.splitfunction.Size = new System.Drawing.Size(1214, 119);
+            this.splitfunction.SplitterDistance = 813;
+            this.splitfunction.TabIndex = 0;
+            // 
+            // lblledTestConnect_E
+            // 
+            this.lblledTestConnect_E.AutoSize = true;
+            this.lblledTestConnect_E.Location = new System.Drawing.Point(580, 48);
+            this.lblledTestConnect_E.Name = "lblledTestConnect_E";
+            this.lblledTestConnect_E.Size = new System.Drawing.Size(77, 14);
+            this.lblledTestConnect_E.TabIndex = 4;
+            this.lblledTestConnect_E.Text = "测试点E：未测";
+            // 
+            // lblledTestConnect_C
+            // 
+            this.lblledTestConnect_C.AutoSize = true;
+            this.lblledTestConnect_C.Location = new System.Drawing.Point(421, 48);
+            this.lblledTestConnect_C.Name = "lblledTestConnect_C";
+            this.lblledTestConnect_C.Size = new System.Drawing.Size(77, 14);
+            this.lblledTestConnect_C.TabIndex = 3;
+            this.lblledTestConnect_C.Text = "测试点C：未测";
+            // 
+            // ledTestConnect
+            // 
+            this.ledTestConnect.BackColor = System.Drawing.Color.Transparent;
+            this.ledTestConnect.ConnectionStatus = YungkuSystem.Controls.Led.enConnectionStatus.Disconnect;
+            this.ledTestConnect.Location = new System.Drawing.Point(697, 27);
+            this.ledTestConnect.Name = "ledTestConnect";
+            this.ledTestConnect.Size = new System.Drawing.Size(33, 33);
+            this.ledTestConnect.TabIndex = 2;
+            // 
+            // lblSuperDogLiveDays
+            // 
+            this.lblSuperDogLiveDays.AutoSize = true;
+            this.lblSuperDogLiveDays.Location = new System.Drawing.Point(12, 46);
+            this.lblSuperDogLiveDays.Name = "lblSuperDogLiveDays";
+            this.lblSuperDogLiveDays.Size = new System.Drawing.Size(77, 14);
+            this.lblSuperDogLiveDays.TabIndex = 1;
+            this.lblSuperDogLiveDays.Text = "加密狗剩余：";
+            // 
+            // statisticalState1
+            // 
+            this.statisticalState1.BackColor = System.Drawing.Color.Transparent;
+            this.statisticalState1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.statisticalState1.Location = new System.Drawing.Point(0, 0);
+            this.statisticalState1.Margin = new System.Windows.Forms.Padding(0);
+            this.statisticalState1.Name = "statisticalState1";
+            this.statisticalState1.Size = new System.Drawing.Size(1214, 40);
+            this.statisticalState1.TabIndex = 0;
+            // 
+            // splitLogAndSatate
+            // 
+            this.splitLogAndSatate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitLogAndSatate.Location = new System.Drawing.Point(0, 0);
+            this.splitLogAndSatate.Margin = new System.Windows.Forms.Padding(0);
+            this.splitLogAndSatate.Name = "splitLogAndSatate";
+            this.splitLogAndSatate.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitLogAndSatate.Panel2
+            // 
+            this.splitLogAndSatate.Panel2.Controls.Add(this.ykTabLog);
+            this.splitLogAndSatate.Size = new System.Drawing.Size(812, 800);
+            this.splitLogAndSatate.SplitterDistance = 300;
+            this.splitLogAndSatate.TabIndex =

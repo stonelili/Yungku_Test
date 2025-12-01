@@ -1,0 +1,250 @@
+﻿using System;
+using Yungku.BNU01_V1.Handler.Pages;
+using YungkuSystem.TestFlow;
+
+namespace Yungku.BNU01_V1.Handler.Logic
+{
+    /// <summary>
+    /// 测试显示辅助类 - 用于更新测试界面显示
+    /// </summary>
+    public static class TestDisplayHelper
+    {
+        private static int leftStationIndex = 0;
+        private static int rightStationIndex = 0;
+
+        /// <summary>
+        /// 清空左工位测试显示
+        /// </summary>
+        public static void ClearLeftStation()
+        {
+            try
+            {
+                leftStationIndex = 0;
+                FormAuto frmAuto = FormMain.GetFormAuto();
+                if (frmAuto != null)
+                {
+                    frmAuto.ClearLeftStationTests();
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"清空左工位测试显示失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 清空右工位测试显示
+        /// </summary>
+        public static void ClearRightStation()
+        {
+            try
+            {
+                rightStationIndex = 0;
+                FormAuto frmAuto = FormMain.GetFormAuto();
+                if (frmAuto != null)
+                {
+                    frmAuto.ClearRightStationTests();
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"清空右工位测试显示失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 清空所有工位测试显示
+        /// </summary>
+        public static void ClearAllStations()
+        {
+            ClearLeftStation();
+            ClearRightStation();
+        }
+
+        /// <summary>
+        /// 更新左工位测试数据
+        /// </summary>
+        /// <param name="testName">测试名称</param>
+        /// <param name="testResult">测试结果</param>
+        public static void UpdateLeftStation(string testName, string testResult)
+        {
+            try
+            {
+                leftStationIndex++;
+                FormAuto frmAuto = FormMain.GetFormAuto();
+                if (frmAuto != null)
+                {
+                    MyApp.RunOnUI(new Action(() =>
+                       {
+                           frmAuto.UpdateLeftStationTest(leftStationIndex, testName, testResult);
+                       }));
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"更新左工位测试显示失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 更新右工位测试数据
+        /// </summary>
+        /// <param name="testName">测试名称</param>
+        /// <param name="testResult">测试结果</param>
+        public static void UpdateRightStation(string testName, string testResult)
+        {
+            try
+            {
+                rightStationIndex++;
+                FormAuto frmAuto = FormMain.GetFormAuto();
+                if (frmAuto != null)
+                {
+                    MyApp.RunOnUI(new Action(() =>
+                        {
+                            frmAuto.UpdateRightStationTest(rightStationIndex, testName, testResult);
+                        }));
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"更新右工位测试显示失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 根据Station索引更新对应工位的测试数据
+        /// </summary>
+        /// <param name="stationIndex">Station索引：0-左工位，1-右工位</param>
+        /// <param name="testName">测试名称</param>
+        /// <param name="testResult">测试结果</param>
+        public static void UpdateStation(int stationIndex, string testName, string testResult)
+        {
+            if (stationIndex == 0)
+            {
+                UpdateLeftStation(testName, testResult);
+            }
+            else if (stationIndex == 1)
+            {
+                UpdateRightStation(testName, testResult);
+            }
+        }
+
+        /// <summary>
+        /// 根据Product产品更新测试数据到界面
+        /// 通常在测试执行前调用，显示开始测试的状态
+        /// </summary>
+        /// <param name="product">产品对象</param>
+        /// <param name="testName">测试名称</param>
+        /// <param name="status">测试状态</param>
+        public static void UpdateTestStart(Product product, string testName, string status = "测试中...")
+        {
+            try
+            {
+                if (product != null)
+                {
+                    // 根据产品名称判断是左工位还是右工位
+                    // 这里假设产品名称包含"Product0"是左工位，"Product1"是右工位
+                    // 实际项目中应根据实际情况调整判断逻辑
+                    int stationIndex = GetStationIndexByProduct(product);
+                    UpdateStation(stationIndex, testName, status);
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"更新测试开始状态失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 根据Product产品更新测试结果到界面
+        /// 通常在测试执行完成后调用，显示测试结果
+        /// </summary>
+        /// <param name="product">产品对象</param>
+        /// <param name="testName">测试名称</param>
+        /// <param name="testResult">测试结果</param>
+        public static void UpdateTestResult(Product product, string testName, TestResult testResult, string resultCode = "")
+        {
+            try
+            {
+                if (product != null)
+                {
+                    int stationIndex = GetStationIndexByProduct(product);
+                    string result = FormatTestResult(testResult, resultCode);
+                    UpdateStation(stationIndex, testName, result);
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"更新测试结果失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 根据产品对象获取工位索引
+        /// </summary>
+        /// <param name="product">产品对象</param>
+        /// <returns>工位索引：0-左工位，1-右工位</returns>
+        private static int GetStationIndexByProduct(Product product)
+        {
+            try
+            {
+                // 方法1: 根据产品索引判断
+                if (product.Jig != null && product.Jig.Head != null)
+                {
+                    int productIndex = product.Jig.Head.ProductIndexOf(product);
+                    return productIndex; // 假设第一个产品是左工位(0)，第二个是右工位(1)
+                }
+
+                // 方法2: 根据产品名称判断
+                if (product.Name.Contains("0"))
+                {
+                    return 0; // 左工位
+                }
+                else if (product.Name.Contains("1"))
+                {
+                    return 1; // 右工位
+                }
+            }
+            catch (Exception ex)
+            {
+                MyApp.GetInstance().Logger.WriteError($"获取工位索引失败: {ex.Message}");
+            }
+
+            return 0; // 默认返回左工位
+        }
+
+        /// <summary>
+        /// 格式化测试结果字符串
+        /// </summary>
+        /// <param name="testResult">测试结果枚举</param>
+        /// <param name="resultCode">结果代码</param>
+        /// <returns>格式化后的结果字符串</returns>
+        private static string FormatTestResult(TestResult testResult, string resultCode)
+        {
+            switch (testResult)
+            {
+                case TestResult.Pass:
+                    return "PASS";
+                case TestResult.Fail:
+                    return string.IsNullOrEmpty(resultCode) ? "FAIL" : $"FAIL ({resultCode})";
+                case TestResult.Error:
+                    return "ERROR";
+                case TestResult.Timeout:
+                    return "TIMEOUT";
+                case TestResult.Empty:
+                    return "EMPTY";
+                default:
+                    return testResult.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 重置所有计数器
+        /// </summary>
+        public static void ResetCounters()
+        {
+            leftStationIndex = 0;
+            rightStationIndex = 0;
+        }
+    }
+}

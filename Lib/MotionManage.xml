@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage GlobalVelocityScale="1">
+  <CardMap CardIndex="0" CardName="雷赛轴卡【DMC】" ModuleConfigFile="Config/DMC5C00-1.xml" />
+  <CardMap CardIndex="1" CardName="雷赛IO卡【IOC】" ModuleConfigFile="Config/IOC0640-2.xml" />
+  <CardMap CardIndex="2" CardName="雷赛轴卡【SMC】" ModuleConfigFile="Config/SMC0604-3.xml" />
+  <AxisMap CardIndex="0" AxisIndex="0" MapName="GlueAxisX" Scale="400" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="300" Acc="0.1" Dec="0.1" JogScale="0.1" SAccScale="0.5" HomeDir="CCW" HomeMode="2" HomeScale="0.1" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="1" MapName="GlueAxisY" Scale="400" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="400" Acc="0.1" Dec="0.1" JogScale="0.1" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.1" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="3" MapName="FousAxisY" Scale="400" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="100" Acc="0.1" Dec="0.1" JogScale="0.5" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.25" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="4" MapName="FousAxisZ" Scale="800" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="100" Acc="0.1" Dec="0.1" JogScale="0.25" SAccScale="0.5" HomeDir="CCW" HomeMode="2" HomeScale="0.25" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="5" MapName="TurntableAxis" Scale="1000" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="350" Acc="0.2" Dec="0.2" JogScale="0.1" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.1" HomeOffset="1.51" />
+  <AxisMap CardIndex="0" AxisIndex="6" MapName="LaserAxisBY" Scale="400" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="250" Acc="0.1" Dec="0.1" JogScale="0.1" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.1" HomeOffset="0" />
+  <AxisMap CardIndex="2" AxisIndex="2" MapName="LaserAxisBX" Scale="400" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="250" Acc="0.1" Dec="0.1" JogScale="0.1" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.1" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="8" MapName="GlueAxisZ" Scale="2015.748031496" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="70" Acc="0.2" Dec="0.2" JogScale="0.125" SAccScale="0.5" HomeDir="CCW" HomeMode="0" HomeScale="0.25" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="2" MapName="FousAxisX" Scale="400" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="100" Acc="0.1" Dec="0.1" JogScale="0.25" SAccScale="0.5" HomeDir="CCW" HomeMode="2" HomeScale="0.25" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="11" MapName="MtfAxisZ" Scale="2015.748031496" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="100" Acc="0.1" Dec="0.1" JogScale="0.125" SAccScale="0.5" HomeDir="CCW" HomeMode="2" HomeScale="0.125" HomeOffset="0" />
+  <AxisMap CardIndex="2" AxisIndex="0" MapName="MtfAxisX" Scale="400" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="200" Acc="0.1" Dec="0.1" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="2" HomeScale="0.2" HomeOffset="0" />
+  <AxisMap CardIndex="0" AxisIndex="7" MapName="FousAxisR" Scale="55.5555555555" DirRvs="1" StartVel="0" MaxSpeed="1200" Vel="500" Acc="0.1" Dec="0.1" JogScale="0.1" SAccScale="0.5" HomeDir="CW" HomeMode="2" HomeScale="0.25" HomeOffset="0" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="ResetButton" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="StartButton" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="正压检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="StopButton" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="白场伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="5" MapName="白场缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="6" MapName="黑场伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="7" MapName="黑场缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="8" MapName="治具1伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="9" MapName="治具1缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="10" MapName="治具2伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="11" MapName="治具2缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="12" MapName="治具3伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="13" MapName="治具3缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="14" MapName="治具4伸出" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="15" MapName="治具4缩回" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="白场气缸" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="治具1" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="治具2" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="治具3" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="5" MapName="治具4" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="6" MapName="治具5" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="7" MapName="治具6" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="8" MapName="治具1真空控制" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="9" MapName="治具2真空控制" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="10" MapName="治具3真空控制" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="11" MapName="治具4真空控制" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="12" MapName="治具5真空控制" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="13" MapName="治具6真空控制" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="0" MapName="治具5伸出" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="1" MapName="治具5缩回" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="2" MapName="治具6伸出" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="3" MapName="治具6缩回" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="4" MapName="夹持气缸伸出" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="5" MapName="夹持气缸缩回" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="8" MapName="治具1真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="9" MapName="治具2真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="10" MapName="治具3真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="11" MapName="治具4真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="12" MapName="治具5真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="13" MapName="治具6真空检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="0" MapName="三色灯绿" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="1" MapName="三色灯红" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="2" MapName="三色灯黄" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="5" MapName="Chart上" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="6" MapName="Chart下" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="7" MapName="UV灯" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="9" MapName="PASS" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="10" MapName="FAIL" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="11" MapName="D夹持气缸" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="12" MapName="D清残胶气缸" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="0" MapName="治具7伸出" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="1" MapName="治具7缩回" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="2" MapName="治具8伸出" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="3" MapName="治具8缩回" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="4" MapName="治具7真空检知" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="5" MapName="治具8真空检知" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="6" MapName="压力传感器" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="7" MapName="液位感应" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="8" MapName="光栅" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="9" MapName="安全门" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="10" MapName="SkipButton" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="11" MapName="PowerLed" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="12" MapName="UV气缸伸出" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="13" MapName="UV气缸缩回" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="0" MapName="治具7" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="1" MapName="治具8" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="2" MapName="治具7真空控制" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="3" MapName="治具8真空控制" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="6" MapName="UV气缸" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="7" MapName="UV吹气" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="3" MapName="Beep" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="14" MapName="烧录切换气缸伸出" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="15" MapName="烧录切换气缸缩回" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="16" MapName="烧录平移气缸伸出" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="17" MapName="烧录平移气缸缩回" IOType="Input" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="4" MapName="烧录切换" IOType="Output" />
+  <IOMap CardIndex="2" AxisIndex="-1" IOIndex="5" MapName="烧录平移" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="8" MapName="黑场气缸" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="点胶" IOType="Output" />
+</MotionManage>

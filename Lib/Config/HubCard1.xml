@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage PortName="COM3" BaudRate="115200" ReadTimeout="1000" SendTimeout="200" DeviceNumber="3" InPutNumber="40" OutPutNumber="32">
+</MotionManage>

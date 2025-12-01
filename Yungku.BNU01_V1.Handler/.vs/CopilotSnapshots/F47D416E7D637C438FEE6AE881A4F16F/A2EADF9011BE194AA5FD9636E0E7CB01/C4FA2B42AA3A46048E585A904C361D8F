@@ -1,0 +1,145 @@
+﻿namespace Yungku.BNU01_V1.Handler.Pages
+{
+    partial class FormAuto
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            this.cmsMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiClearStatis = new System.Windows.Forms.ToolStripMenuItem();
+            this.显示统计信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsLogContext = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiClearLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSelectLogs = new System.Windows.Forms.ToolStripMenuItem();
+            this.当前另存为ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tmrUpdateUI = new System.Windows.Forms.Timer(this.components);
+            this.cmsWorkTray = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsmiSetWaitTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetWaitToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetEmptyTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetEmptyToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetPassToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetPassToAllGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetEmptyToBeforeGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetEmptyToAfterGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tool = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetWaitToBeforeGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetWaitToAfterGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetNoUsedToCurGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.cmsFailTray = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnClearFailTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetEmptyToCurFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetNGToCurFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetFailToAllFailGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSetAllowCodeToCurRowsGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSetAllowCodeToCurColsGrid = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsStatical = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.显示不良明细ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nG代码管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitMain = new System.Windows.Forms.SplitContainer();
+            this.lblProductName = new YungkuSystem.YKControls.Roll.YKRollText();
+            this.splitBase = new System.Windows.Forms.SplitContainer();
+            this.splitfunction = new System.Windows.Forms.SplitContainer();
+            this.lblledTestConnect_E = new System.Windows.Forms.Label();
+            this.lblledTestConnect_C = new System.Windows.Forms.Label();
+            this.ledTestConnect = new YungkuSystem.Controls.Led();
+            this.lblSuperDogLiveDays = new System.Windows.Forms.Label();
+            this.statisticalState1 = new YungkuSystem.Controls.StatisticalState();
+            this.splitLogAndSatate = new System.Windows.Forms.SplitContainer();
+            this.ykTabLog = new YungkuSystem.YKControls.Tab.YKTabControlExt();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.lvLog = new YungkuSystem.Controls.YSListView();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.lvAlarms = new YungkuSystem.Controls.YSListView();
+            this.tabPageTestResults = new System.Windows.Forms.TabPage();
+            this.splitTestResults = new System.Windows.Forms.SplitContainer();
+            this.lvLeftStationTest = new YungkuSystem.Controls.YSListView();
+            this.lvRightStationTest = new YungkuSystem.Controls.YSListView();
+            this.cmsMain.SuspendLayout();
+            this.cmsLogContext.SuspendLayout();
+            this.cmsWorkTray.SuspendLayout();
+            this.cmsFailTray.SuspendLayout();
+            this.cmsStatical.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitMain)).BeginInit();
+            this.splitMain.Panel1.SuspendLayout();
+            this.splitMain.Panel2.SuspendLayout();
+            this.splitMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitBase)).BeginInit();
+            this.splitBase.Panel1.SuspendLayout();
+            this.splitBase.Panel2.SuspendLayout();
+            this.splitBase.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitfunction)).BeginInit();
+            this.splitfunction.Panel1.SuspendLayout();
+            this.splitfunction.Panel2.SuspendLayout();
+            this.splitfunction.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitLogAndSatate)).BeginInit();
+            this.splitLogAndSatate.Panel2.SuspendLayout();
+            this.splitLogAndSatate.SuspendLayout();
+            this.ykTabLog.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.ykTabState.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.pageJig.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.pageTime.SuspendLayout();
+            this.tabPageTestResults.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitTestResults)).BeginInit();
+            this.splitTestResults.Panel1.SuspendLayout();
+            this.splitTestResults.Panel2.SuspendLayout();
+            this.splitTestResults.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // cmsMain
+            // 
+            this.cmsMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiClearStatis,
+            this.显示统计信息ToolStripMenuItem});
+            this.cmsMain.Name = "cmsMain";
+            this.cmsMain.Size = new System.Drawing.Size(149, 48);
+            // 
+            // tsmiClearStatis
+            // 
+            this.tsmiClearStatis.Name = "tsmiClearStatis";
+            this.tsmiClearStatis.Size = new System.Drawing.Size(148, 22);
+            this.tsmiClearStatis.Text = "清除统计数据";
+            // 
+            // 显示统计信息ToolStripMenuItem
+            // 
+            this.显示统计信息ToolStripMenuItem.Name = "显示统计信息ToolStripMenuItem";
+            this.显

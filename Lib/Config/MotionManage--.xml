@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<MotionManage GlobalVelocityScale="1">
+  <CardMap CardIndex="0" CardName="" DllFileName="YungkuSystem.Devices.dll" ModuleConfigFile=".\" />
+  <AxisMap CardIndex="0" AxisIndex="0" MapName="调焦Z轴" Scale="2000" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="1000" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="0" HomeScale="0.25" HomeOffset="0" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <AxisMap CardIndex="0" AxisIndex="1" MapName="转盘轴" Scale="500" DirRvs="0" StartVel="0" MaxSpeed="1200" Vel="1000" Acc="0.2" Dec="0.2" JogScale="0.5" SAccScale="0.5" HomeDir="CCW" HomeMode="0" HomeScale="0.25" HomeOffset="0" MaxAcc="0.2" MaxDec="0.2" AJerk="2" DJerk="2" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="电源确认" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="光栅检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="安全门" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="Start按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="Skip按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="5" MapName="Stop按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="7" MapName="ReTest按钮" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="8" MapName="A治具关盖检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="9" MapName="B治具关盖检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="10" MapName="C治具关盖检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="11" MapName="D治具关盖检知" IOType="Input" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="0" MapName="三色灯黄" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="1" MapName="三色灯红" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="2" MapName="三色灯绿" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="3" MapName="蜂鸣器" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="4" MapName="PASS灯" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="5" MapName="FAIL灯" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="8" MapName="黑白场升降气缸" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="9" MapName="黑白场旋转气缸" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="10" MapName="积分球气缸" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="0" MapName="正压检知" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="2" MapName="黑白场上限" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="3" MapName="黑白场下限" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="4" MapName="旋转气缸黑场到位" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="5" MapName="旋转气缸白场到位" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="8" MapName="积分球上限" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="9" MapName="积分球下限" IOType="Input" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="0" MapName="碗形光源" IOType="Output" />
+  <IOMap CardIndex="1" AxisIndex="-1" IOIndex="1" MapName="平面光源板" IOType="Output" />
+  <IOMap CardIndex="0" AxisIndex="-1" IOIndex="6" MapName="Reset按钮" IOType="Input" />
+</MotionManage>
