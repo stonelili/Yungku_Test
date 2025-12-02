@@ -66,6 +66,17 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         private readonly object _pauseLock = new object();
         private ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true);
 
+        /// <summary>
+        /// 全局变量存储 - 跨序列共享
+        /// </summary>
+        private static readonly Dictionary<string, SequenceVariable> _globalVariables = new Dictionary<string, SequenceVariable>();
+        private static readonly object _globalVarLock = new object();
+
+        /// <summary>
+        /// 局部变量存储 - 当前步骤级别
+        /// </summary>
+        private readonly Dictionary<string, SequenceVariable> _localVariables = new Dictionary<string, SequenceVariable>();
+
         #endregion
 
         #region 属性
@@ -187,6 +198,9 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             sequence.State = SequenceState.Running;
             sequence.StartTime = DateTime.Now;
 
+            // 初始化全局变量
+            InitializeGlobalVariables();
+
             WriteLog("INFO", $"开始执行序列: {sequence.Name}");
 
             OnSequenceStarted(new SequenceExecutionEventArgs
@@ -216,6 +230,9 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 for (int i = 0; i < sequence.Steps.Count && !shouldEndSequence; i++)
                 {
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    // 清除局部变量（每个步骤开始时）
+                    ClearLocalVariables();
 
                     // 检查暂停
                     _pauseEvent.Wait(_cancellationTokenSource.Token);
@@ -557,27 +574,219 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         }
 
         /// <summary>
-        /// 获取变量值（先从序列变量获取，再从上下文获取）
+        /// 获取变量值（按作用域优先级获取：局部 > 序列 > 全局 > 上下文）
+        /// 支持数组索引访问，如 ${arrayVar[0]}
         /// </summary>
         private object GetVariableValue(string name)
         {
-            // 首先从序列变量获取
-            if (_currentSequence != null)
+            // 检查是否是数组索引访问
+            int arrayIndex = -1;
+            string varName = name;
+            
+            int bracketStart = name.IndexOf('[');
+            if (bracketStart > 0 && name.EndsWith("]"))
             {
-                var seqVar = _currentSequence.GetVariable(name);
-                if (seqVar != null)
+                varName = name.Substring(0, bracketStart);
+                string indexStr = name.Substring(bracketStart + 1, name.Length - bracketStart - 2);
+                if (int.TryParse(indexStr, out arrayIndex))
                 {
-                    return seqVar.CurrentValue ?? seqVar.GetTypedDefaultValue();
+                    // 索引解析成功
+                }
+                else
+                {
+                    // 索引可能是变量引用
+                    var indexValue = GetVariableValue(indexStr);
+                    if (indexValue is int idx)
+                    {
+                        arrayIndex = idx;
+                    }
                 }
             }
 
-            // 然后从上下文获取
-            if (Context.TryGetValue(name, out var contextValue))
+            SequenceVariable variable = null;
+
+            // 1. 首先从局部变量获取
+            if (_localVariables.TryGetValue(varName, out var localVar))
             {
+                variable = localVar;
+            }
+            // 2. 然后从序列变量获取
+            else if (_currentSequence != null)
+            {
+                var seqVar = _currentSequence.GetVariable(varName);
+                if (seqVar != null && seqVar.Scope != VariableScope.Global)
+                {
+                    variable = seqVar;
+                }
+            }
+            // 3. 最后从全局变量获取
+            if (variable == null)
+            {
+                lock (_globalVarLock)
+                {
+                    if (_globalVariables.TryGetValue(varName, out var globalVar))
+                    {
+                        variable = globalVar;
+                    }
+                }
+            }
+
+            if (variable != null)
+            {
+                var value = variable.CurrentValue ?? variable.GetTypedDefaultValue();
+                
+                // 如果是数组并且指定了索引
+                if (arrayIndex >= 0 && variable.IsArray)
+                {
+                    return variable.GetArrayElement(arrayIndex);
+                }
+                
+                return value;
+            }
+
+            // 4. 最后从上下文获取
+            if (Context.TryGetValue(varName, out var contextValue))
+            {
+                if (arrayIndex >= 0 && contextValue is Array arr && arrayIndex < arr.Length)
+                {
+                    return arr.GetValue(arrayIndex);
+                }
                 return contextValue;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// 设置变量值（根据作用域存储到对应位置）
+        /// </summary>
+        public bool SetVariable(string name, object value, VariableScope scope = VariableScope.Sequence)
+        {
+            // 检查是否是数组索引设置
+            int arrayIndex = -1;
+            string varName = name;
+            
+            int bracketStart = name.IndexOf('[');
+            if (bracketStart > 0 && name.EndsWith("]"))
+            {
+                varName = name.Substring(0, bracketStart);
+                string indexStr = name.Substring(bracketStart + 1, name.Length - bracketStart - 2);
+                int.TryParse(indexStr, out arrayIndex);
+            }
+
+            SequenceVariable variable = null;
+
+            switch (scope)
+            {
+                case VariableScope.Local:
+                    if (!_localVariables.TryGetValue(varName, out variable))
+                    {
+                        variable = new SequenceVariable(varName, value?.GetType().Name.ToLower() ?? "string", null, VariableScope.Local);
+                        _localVariables[varName] = variable;
+                    }
+                    break;
+
+                case VariableScope.Global:
+                    lock (_globalVarLock)
+                    {
+                        if (!_globalVariables.TryGetValue(varName, out variable))
+                        {
+                            variable = new SequenceVariable(varName, value?.GetType().Name.ToLower() ?? "string", null, VariableScope.Global);
+                            _globalVariables[varName] = variable;
+                        }
+                    }
+                    break;
+
+                case VariableScope.Sequence:
+                default:
+                    if (_currentSequence != null)
+                    {
+                        variable = _currentSequence.GetVariable(varName);
+                        if (variable == null)
+                        {
+                            variable = new SequenceVariable(varName, value?.GetType().Name.ToLower() ?? "string", null, VariableScope.Sequence);
+                            _currentSequence.Variables.Add(variable);
+                        }
+                    }
+                    break;
+            }
+
+            if (variable != null)
+            {
+                if (arrayIndex >= 0 && variable.IsArray)
+                {
+                    return variable.SetArrayElement(arrayIndex, value);
+                }
+                variable.CurrentValue = value;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 获取全局变量
+        /// </summary>
+        public static SequenceVariable GetGlobalVariable(string name)
+        {
+            lock (_globalVarLock)
+            {
+                _globalVariables.TryGetValue(name, out var variable);
+                return variable;
+            }
+        }
+
+        /// <summary>
+        /// 设置全局变量
+        /// </summary>
+        public static void SetGlobalVariable(string name, SequenceVariable variable)
+        {
+            lock (_globalVarLock)
+            {
+                variable.Scope = VariableScope.Global;
+                _globalVariables[name] = variable;
+            }
+        }
+
+        /// <summary>
+        /// 清除所有全局变量
+        /// </summary>
+        public static void ClearGlobalVariables()
+        {
+            lock (_globalVarLock)
+            {
+                _globalVariables.Clear();
+            }
+        }
+
+        /// <summary>
+        /// 清除局部变量（通常在步骤开始时调用）
+        /// </summary>
+        private void ClearLocalVariables()
+        {
+            _localVariables.Clear();
+        }
+
+        /// <summary>
+        /// 初始化全局变量（从序列配置中）
+        /// </summary>
+        private void InitializeGlobalVariables()
+        {
+            if (_currentSequence == null)
+                return;
+
+            foreach (var variable in _currentSequence.Variables.Where(v => v.Scope == VariableScope.Global))
+            {
+                lock (_globalVarLock)
+                {
+                    if (!_globalVariables.ContainsKey(variable.Name))
+                    {
+                        variable.Reset();
+                        _globalVariables[variable.Name] = variable;
+                        WriteLog("INFO", $"初始化全局变量: {variable.Name} = {variable.CurrentValue}");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -588,21 +797,23 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             if (string.IsNullOrEmpty(step.ResultVariable) || _currentSequence == null)
                 return;
 
-            var variable = _currentSequence.GetVariable(step.ResultVariable);
-            if (variable == null)
+            // 检查是否带有作用域前缀：Local.varName, Global.varName
+            VariableScope scope = VariableScope.Sequence;
+            string varName = step.ResultVariable;
+
+            if (varName.StartsWith("Local.", StringComparison.OrdinalIgnoreCase))
             {
-                // 自动创建变量
-                variable = new SequenceVariable
-                {
-                    Name = step.ResultVariable,
-                    Type = step.ActualValue?.GetType().Name.ToLower() ?? "string"
-                };
-                _currentSequence.Variables.Add(variable);
-                WriteLog("INFO", $"自动创建变量: {step.ResultVariable}");
+                scope = VariableScope.Local;
+                varName = varName.Substring(6);
+            }
+            else if (varName.StartsWith("Global.", StringComparison.OrdinalIgnoreCase))
+            {
+                scope = VariableScope.Global;
+                varName = varName.Substring(7);
             }
 
-            variable.CurrentValue = step.ActualValue;
-            WriteLog("INFO", $"存储结果到变量: {step.ResultVariable} = {step.ActualValue}");
+            SetVariable(varName, step.ActualValue, scope);
+            WriteLog("INFO", $"存储结果到变量: {step.ResultVariable} = {step.ActualValue} (Scope: {scope})");
         }
 
         /// <summary>

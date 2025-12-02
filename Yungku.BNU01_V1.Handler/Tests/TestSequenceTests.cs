@@ -496,6 +496,49 @@ namespace Yungku.BNU01_V1.Handler.Tests
                 bool removeResult = sequence.RemoveVariable("Barcode");
                 AssertTrue("删除变量成功", removeResult);
                 AssertTrue("变量已删除", sequence.Variables.Count == 2);
+
+                // 测试变量作用域
+                var localVar = new SequenceVariable("localVar", "int", "1", VariableScope.Local);
+                AssertTrue("局部变量作用域正确", localVar.Scope == VariableScope.Local);
+
+                var globalVar = new SequenceVariable("globalVar", "int", "100", VariableScope.Global);
+                AssertTrue("全局变量作用域正确", globalVar.Scope == VariableScope.Global);
+
+                var seqVar = new SequenceVariable("seqVar", "int", "50");
+                AssertTrue("序列变量默认作用域正确", seqVar.Scope == VariableScope.Sequence);
+
+                // 测试数组类型变量
+                var arrayVar = new SequenceVariable("testArray", "int[]", "1,2,3,4,5");
+                AssertTrue("数组变量是数组类型", arrayVar.IsArray);
+                AssertTrue("数组变量基础类型正确", arrayVar.BaseType == "int");
+
+                var arrayValue = arrayVar.GetTypedDefaultValue() as int[];
+                AssertTrue("数组默认值转换成功", arrayValue != null);
+                AssertTrue("数组长度正确", arrayValue.Length == 5);
+                AssertTrue("数组元素值正确", arrayValue[0] == 1 && arrayValue[4] == 5);
+
+                // 测试数组元素访问
+                arrayVar.Reset();
+                var element = arrayVar.GetArrayElement(2);
+                AssertTrue("获取数组元素成功", element != null && (int)element == 3);
+
+                // 测试设置数组元素
+                bool setArrayResult = arrayVar.SetArrayElement(2, 100);
+                AssertTrue("设置数组元素成功", setArrayResult);
+                element = arrayVar.GetArrayElement(2);
+                AssertTrue("数组元素已更新", element != null && (int)element == 100);
+
+                // 测试double数组
+                var doubleArrayVar = new SequenceVariable("doubleArray", "double[]", "1.1,2.2,3.3");
+                var doubleArray = doubleArrayVar.GetTypedDefaultValue() as double[];
+                AssertTrue("double数组转换成功", doubleArray != null && doubleArray.Length == 3);
+                AssertTrue("double数组元素正确", Math.Abs(doubleArray[1] - 2.2) < 0.001);
+
+                // 测试string数组
+                var stringArrayVar = new SequenceVariable("stringArray", "string[]", "a,b,c");
+                var stringArray = stringArrayVar.GetTypedDefaultValue() as string[];
+                AssertTrue("string数组转换成功", stringArray != null && stringArray.Length == 3);
+                AssertTrue("string数组元素正确", stringArray[0] == "a" && stringArray[2] == "c");
             }
             catch (Exception ex)
             {

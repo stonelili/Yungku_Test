@@ -238,8 +238,31 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
     }
 
     /// <summary>
+    /// 变量作用域枚举
+    /// </summary>
+    public enum VariableScope
+    {
+        /// <summary>
+        /// 局部变量 - 仅在当前步骤中有效
+        /// </summary>
+        Local,
+
+        /// <summary>
+        /// 序列变量 - 在当前序列中有效
+        /// </summary>
+        Sequence,
+
+        /// <summary>
+        /// 全局变量 - 在所有序列中有效，跨序列共享
+        /// </summary>
+        Global
+    }
+
+    /// <summary>
     /// 序列级变量定义 - 类似TestStand的序列变量
     /// 可以在配置中定义变量，并在步骤参数中通过${变量名}引用
+    /// 支持局部变量、序列变量、全局变量三种作用域
+    /// 支持数组类型：int[], double[], string[] 等
     /// </summary>
     [Serializable]
     public class SequenceVariable
@@ -251,13 +274,14 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         public string Name { get; set; }
 
         /// <summary>
-        /// 变量类型 (string, int, double, bool, etc.)
+        /// 变量类型 (string, int, double, bool, int[], double[], string[] 等)
+        /// 数组类型使用 类型[] 格式，如 int[], double[], string[]
         /// </summary>
         [XmlAttribute]
         public string Type { get; set; } = "string";
 
         /// <summary>
-        /// 默认值
+        /// 默认值 (数组类型使用逗号分隔，如 "1,2,3,4,5")
         /// </summary>
         [XmlAttribute]
         public string DefaultValue { get; set; }
@@ -269,10 +293,16 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         public string Description { get; set; }
 
         /// <summary>
-        /// 变量作用域 (Sequence=序列级, Step=步骤级, Global=全局)
+        /// 变量作用域 (Local=局部, Sequence=序列级, Global=全局)
         /// </summary>
         [XmlAttribute]
-        public string Scope { get; set; } = "Sequence";
+        public VariableScope Scope { get; set; } = VariableScope.Sequence;
+
+        /// <summary>
+        /// 数组大小（仅对数组类型有效，0表示动态大小）
+        /// </summary>
+        [XmlAttribute]
+        public int ArraySize { get; set; } = 0;
 
         /// <summary>
         /// 当前值（运行时）
@@ -280,15 +310,28 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         [XmlIgnore]
         public object CurrentValue { get; set; }
 
+        /// <summary>
+        /// 是否为数组类型
+        /// </summary>
+        [XmlIgnore]
+        public bool IsArray => Type?.EndsWith("[]") == true;
+
+        /// <summary>
+        /// 获取基础类型（去掉数组标记）
+        /// </summary>
+        [XmlIgnore]
+        public string BaseType => IsArray ? Type.Substring(0, Type.Length - 2) : Type;
+
         public SequenceVariable()
         {
         }
 
-        public SequenceVariable(string name, string type, string defaultValue = null)
+        public SequenceVariable(string name, string type, string defaultValue = null, VariableScope scope = VariableScope.Sequence)
         {
             Name = name;
             Type = type;
             DefaultValue = defaultValue;
+            Scope = scope;
         }
 
         /// <summary>
@@ -310,7 +353,21 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             if (string.IsNullOrEmpty(value))
                 return GetDefaultForType();
 
-            switch (Type.ToLower())
+            // 处理数组类型
+            if (IsArray)
+            {
+                return ConvertToArray(value);
+            }
+
+            return ConvertScalarToType(value, BaseType);
+        }
+
+        /// <summary>
+        /// 转换标量值
+        /// </summary>
+        private object ConvertScalarToType(string value, string typeName)
+        {
+            switch (typeName.ToLower())
             {
                 case "int":
                 case "int32":
@@ -335,10 +392,71 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         }
 
         /// <summary>
+        /// 将逗号分隔的字符串转换为数组
+        /// </summary>
+        private object ConvertToArray(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return GetDefaultForType();
+
+            string[] parts = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            switch (BaseType.ToLower())
+            {
+                case "int":
+                case "int32":
+                    return parts.Select(p => int.Parse(p.Trim())).ToArray();
+                case "long":
+                case "int64":
+                    return parts.Select(p => long.Parse(p.Trim())).ToArray();
+                case "double":
+                    return parts.Select(p => double.Parse(p.Trim())).ToArray();
+                case "float":
+                case "single":
+                    return parts.Select(p => float.Parse(p.Trim())).ToArray();
+                case "bool":
+                case "boolean":
+                    return parts.Select(p => bool.Parse(p.Trim())).ToArray();
+                case "decimal":
+                    return parts.Select(p => decimal.Parse(p.Trim())).ToArray();
+                case "string":
+                default:
+                    return parts.Select(p => p.Trim()).ToArray();
+            }
+        }
+
+        /// <summary>
         /// 获取类型的默认值
         /// </summary>
         private object GetDefaultForType()
         {
+            if (IsArray)
+            {
+                int size = ArraySize > 0 ? ArraySize : 0;
+                switch (BaseType.ToLower())
+                {
+                    case "int":
+                    case "int32":
+                        return new int[size];
+                    case "long":
+                    case "int64":
+                        return new long[size];
+                    case "double":
+                        return new double[size];
+                    case "float":
+                    case "single":
+                        return new float[size];
+                    case "bool":
+                    case "boolean":
+                        return new bool[size];
+                    case "decimal":
+                        return new decimal[size];
+                    case "string":
+                    default:
+                        return new string[size];
+                }
+            }
+
             switch (Type.ToLower())
             {
                 case "int":
@@ -364,6 +482,94 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         }
 
         /// <summary>
+        /// 获取数组元素值
+        /// </summary>
+        public object GetArrayElement(int index)
+        {
+            if (!IsArray || CurrentValue == null)
+                return null;
+
+            var array = CurrentValue as Array;
+            if (array == null || index < 0 || index >= array.Length)
+                return null;
+
+            return array.GetValue(index);
+        }
+
+        /// <summary>
+        /// 设置数组元素值
+        /// </summary>
+        public bool SetArrayElement(int index, object value)
+        {
+            if (!IsArray || CurrentValue == null)
+                return false;
+
+            var array = CurrentValue as Array;
+            if (array == null || index < 0 || index >= array.Length)
+                return false;
+
+            try
+            {
+                array.SetValue(value, index);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 调整数组大小
+        /// </summary>
+        public void ResizeArray(int newSize)
+        {
+            if (!IsArray || newSize < 0)
+                return;
+
+            var oldArray = CurrentValue as Array;
+            Array newArray = null;
+
+            switch (BaseType.ToLower())
+            {
+                case "int":
+                case "int32":
+                    newArray = new int[newSize];
+                    break;
+                case "long":
+                case "int64":
+                    newArray = new long[newSize];
+                    break;
+                case "double":
+                    newArray = new double[newSize];
+                    break;
+                case "float":
+                case "single":
+                    newArray = new float[newSize];
+                    break;
+                case "bool":
+                case "boolean":
+                    newArray = new bool[newSize];
+                    break;
+                case "decimal":
+                    newArray = new decimal[newSize];
+                    break;
+                case "string":
+                default:
+                    newArray = new string[newSize];
+                    break;
+            }
+
+            if (oldArray != null && newArray != null)
+            {
+                int copyLength = Math.Min(oldArray.Length, newSize);
+                Array.Copy(oldArray, newArray, copyLength);
+            }
+
+            CurrentValue = newArray;
+        }
+
+        /// <summary>
         /// 重置为默认值
         /// </summary>
         public void Reset()
@@ -373,7 +579,16 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
         public override string ToString()
         {
-            return $"{Name}({Type})={CurrentValue ?? DefaultValue}";
+            if (IsArray && CurrentValue is Array arr)
+            {
+                var elements = new List<string>();
+                foreach (var item in arr)
+                {
+                    elements.Add(item?.ToString() ?? "null");
+                }
+                return $"{Name}({Type})[{Scope}]=[{string.Join(",", elements)}]";
+            }
+            return $"{Name}({Type})[{Scope}]={CurrentValue ?? DefaultValue}";
         }
     }
 

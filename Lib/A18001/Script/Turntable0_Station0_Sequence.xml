@@ -2,12 +2,31 @@
 <TestSequenceConfig Version="1.0" Name="左工位测试序列配置" CreatedTime="2024-01-01T00:00:00">
   <Sequence ID="SEQ_LEFT_STATION" Name="左工位测试序列" Description="左工位的完整测试流程" Enabled="true" Version="1.0" Author="System" CreatedTime="2024-01-01T00:00:00" ModifiedTime="2024-01-01T00:00:00">
     <PreCondition>HasProduct</PreCondition>
-    <!-- 序列变量定义 - 类似TestStand的序列变量功能 -->
+    <!-- 
+      序列变量定义 - 类似TestStand的变量功能
+      
+      变量作用域（Scope）：
+      - Local: 局部变量，仅在当前步骤中有效
+      - Sequence: 序列变量（默认），在当前序列中有效
+      - Global: 全局变量，跨序列共享
+      
+      数组类型：使用 类型[] 格式，如 int[], double[], string[]
+      数组默认值：使用逗号分隔，如 "1,2,3,4,5"
+    -->
     <Variables>
+      <!-- 序列级变量 -->
       <Variable Name="ProductIndex" Type="int" DefaultValue="0" Description="当前产品索引" Scope="Sequence" />
       <Variable Name="TestChannel" Type="int" DefaultValue="0" Description="测试通道" Scope="Sequence" />
       <Variable Name="FocalLengthResult" Type="double" DefaultValue="0" Description="焦距测试结果" Scope="Sequence" />
       <Variable Name="BarcodeResult" Type="string" DefaultValue="" Description="二维码读取结果" Scope="Sequence" />
+      
+      <!-- 全局变量 - 跨序列共享 -->
+      <Variable Name="TotalTestCount" Type="int" DefaultValue="0" Description="总测试次数（全局）" Scope="Global" />
+      <Variable Name="TotalPassCount" Type="int" DefaultValue="0" Description="总通过次数（全局）" Scope="Global" />
+      
+      <!-- 数组类型变量示例 -->
+      <Variable Name="TestResults" Type="double[]" DefaultValue="0,0,0,0,0" Description="测试结果数组" Scope="Sequence" ArraySize="5" />
+      <Variable Name="ChannelList" Type="int[]" DefaultValue="0,1,2,3" Description="通道列表" Scope="Sequence" ArraySize="4" />
     </Variables>
     <Steps>
       <Step ID="1" Name="初始化测试" Description="初始化测试环境" Type="Action" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Abort">
@@ -16,7 +35,7 @@
           <Param Name="timeout" Type="int" Value="5000" />
         </Parameters>
       </Step>
-      <!-- 演示变量引用：使用 ${变量名} 引用序列变量 -->
+      <!-- 演示变量引用：使用 ${变量名} 引用变量 -->
       <Step ID="2" Name="焦距测试" Description="测试模组焦距是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue" ResultVariable="FocalLengthResult">
         <TargetMethod Class="CommonTestMethods" Method="TestFocalLength" />
         <Parameters>
@@ -36,10 +55,12 @@
         </Parameters>
         <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE" />
       </Step>
+      <!-- 演示数组元素引用：使用 ${数组名[索引]} -->
       <Step ID="5" Name="电流测试" Description="测试工作电流是否正常" Type="NumericTest" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestCurrent" />
         <Parameters>
-          <Param Name="channel" Type="int" Value="${TestChannel}" />
+          <!-- 引用数组第一个元素 -->
+          <Param Name="channel" Type="int" Value="${ChannelList[0]}" />
         </Parameters>
         <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE" />
       </Step>
@@ -57,7 +78,8 @@
       <Step ID="8" Name="脏污检测" Description="检测产品表面是否有脏污" Type="PassFail" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestContamination" />
       </Step>
-      <Step ID="9" Name="清理测试" Description="清理测试环境" Type="Action" Enabled="true" Timeout="3000" RetryCount="0" OnFail="Continue">
+      <!-- 演示存储到全局变量：使用 Global.变量名 前缀 -->
+      <Step ID="9" Name="清理测试" Description="清理测试环境" Type="Action" Enabled="true" Timeout="3000" RetryCount="0" OnFail="Continue" ResultVariable="Global.TotalTestCount">
         <TargetMethod Class="CommonTestMethods" Method="Cleanup" />
       </Step>
     </Steps>
