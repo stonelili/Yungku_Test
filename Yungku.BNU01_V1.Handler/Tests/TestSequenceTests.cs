@@ -348,14 +348,33 @@ namespace Yungku.BNU01_V1.Handler.Tests
             }
             finally
             {
-                // 清理临时文件
-                if (File.Exists(tempFile))
-                {
-                    try { File.Delete(tempFile); } catch { }
-                }
+                // 确保清理临时文件，即使测试中断
+                CleanupTempFile(tempFile);
             }
 
             EndTest();
+        }
+
+        /// <summary>
+        /// 清理临时文件
+        /// </summary>
+        private void CleanupTempFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return;
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                // 记录清理失败但不影响测试结果
+                testResults.AppendLine($"  [警告] 清理临时文件失败: {ex.Message}");
+            }
         }
 
         #endregion

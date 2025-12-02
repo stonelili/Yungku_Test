@@ -172,7 +172,16 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             }
             catch (ReflectionTypeLoadException ex)
             {
-                // 处理某些类型无法加载的情况
+                // 处理某些类型无法加载的情况 - 记录到调试输出
+                System.Diagnostics.Debug.WriteLine($"[TestMethodRegistry] ReflectionTypeLoadException: {ex.Message}");
+                foreach (var loaderException in ex.LoaderExceptions)
+                {
+                    if (loaderException != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"  Loader exception: {loaderException.Message}");
+                    }
+                }
+
                 foreach (var type in ex.Types)
                 {
                     if (type != null && !type.IsAbstract && !type.IsInterface)
@@ -181,16 +190,18 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                         {
                             ScanType(type);
                         }
-                        catch
+                        catch (Exception typeEx)
                         {
-                            // 忽略无法扫描的类型
+                            // 记录无法扫描的类型
+                            System.Diagnostics.Debug.WriteLine($"[TestMethodRegistry] Failed to scan type {type.Name}: {typeEx.Message}");
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // 忽略程序集扫描错误
+                // 记录程序集扫描错误
+                System.Diagnostics.Debug.WriteLine($"[TestMethodRegistry] Assembly scan error: {ex.Message}");
             }
         }
 

@@ -211,8 +211,9 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 // 执行所有步骤
                 int totalSteps = sequence.Steps.Count(s => s.Enabled);
                 int executedSteps = 0;
+                bool shouldEndSequence = false;
 
-                for (int i = 0; i < sequence.Steps.Count; i++)
+                for (int i = 0; i < sequence.Steps.Count && !shouldEndSequence; i++)
                 {
                     _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -245,7 +246,8 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                                 WriteLog("WARN", $"步骤 {step.Name} 失败，中断序列执行");
                                 sequence.State = SequenceState.Aborted;
                                 sequence.ErrorMessage = $"步骤 {step.Name} 失败: {step.ResultMessage}";
-                                goto EndSequence;
+                                shouldEndSequence = true;
+                                break;
 
                             case FailAction.GotoStep:
                                 if (!string.IsNullOrEmpty(step.GotoStepID))
@@ -261,7 +263,8 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
                             case FailAction.GotoPostCondition:
                                 WriteLog("INFO", "跳转到后置条件");
-                                goto EndSequence;
+                                shouldEndSequence = true;
+                                break;
 
                             case FailAction.Continue:
                             default:
@@ -277,7 +280,6 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                     }
                 }
 
-                EndSequence:
                 // 执行后置条件
                 if (!string.IsNullOrEmpty(sequence.PostCondition))
                 {
