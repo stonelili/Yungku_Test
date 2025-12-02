@@ -92,6 +92,17 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
         #endregion
 
+        #region 导入配置
+
+        /// <summary>
+        /// 导入的变量定义文件列表
+        /// </summary>
+        [XmlArray("Imports")]
+        [XmlArrayItem("Import")]
+        public List<SequenceImport> Imports { get; set; } = new List<SequenceImport>();
+
+        #endregion
+
         #region 步骤列表
 
         /// <summary>
@@ -563,5 +574,74 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         {
             return Sequences.Where(s => s.Enabled);
         }
+    }
+
+    /// <summary>
+    /// 序列导入配置
+    /// 用于从外部文件导入变量定义或子序列
+    /// </summary>
+    [Serializable]
+    public class SequenceImport
+    {
+        /// <summary>
+        /// 导入文件路径（相对路径或绝对路径）
+        /// </summary>
+        [XmlAttribute]
+        public string File { get; set; }
+
+        /// <summary>
+        /// 导入类型 (Variables: 导入变量, Sequences: 导入序列, All: 导入所有)
+        /// </summary>
+        [XmlAttribute]
+        public ImportType Type { get; set; } = ImportType.Variables;
+
+        /// <summary>
+        /// 是否覆盖已存在的变量
+        /// </summary>
+        [XmlAttribute]
+        public bool OverwriteExisting { get; set; } = false;
+
+        /// <summary>
+        /// 变量名前缀（避免命名冲突）
+        /// </summary>
+        [XmlAttribute]
+        public string Prefix { get; set; }
+
+        /// <summary>
+        /// 导入的变量名过滤（逗号分隔，为空表示导入所有）
+        /// </summary>
+        [XmlAttribute]
+        public string VariableFilter { get; set; }
+
+        public SequenceImport()
+        {
+        }
+
+        public SequenceImport(string file, ImportType type = ImportType.Variables)
+        {
+            File = file;
+            Type = type;
+        }
+    }
+
+    /// <summary>
+    /// 导入类型
+    /// </summary>
+    public enum ImportType
+    {
+        /// <summary>
+        /// 仅导入变量定义
+        /// </summary>
+        Variables,
+
+        /// <summary>
+        /// 仅导入序列定义
+        /// </summary>
+        Sequences,
+
+        /// <summary>
+        /// 导入所有（变量和序列）
+        /// </summary>
+        All
     }
 }

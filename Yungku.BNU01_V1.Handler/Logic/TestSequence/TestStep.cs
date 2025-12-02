@@ -45,7 +45,32 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         /// <summary>
         /// 序列组 - 包含子步骤的组
         /// </summary>
-        SequenceGroup
+        SequenceGroup,
+
+        /// <summary>
+        /// For循环 - 循环执行子步骤
+        /// </summary>
+        ForLoop,
+
+        /// <summary>
+        /// While循环 - 条件循环
+        /// </summary>
+        WhileLoop,
+
+        /// <summary>
+        /// ForEach循环 - 遍历数组
+        /// </summary>
+        ForEachLoop,
+
+        /// <summary>
+        /// 条件分支 - If/Else条件执行
+        /// </summary>
+        ConditionalBranch,
+
+        /// <summary>
+        /// 子序列调用 - 调用另一个序列
+        /// </summary>
+        SubSequenceCall
     }
 
     /// <summary>
@@ -876,6 +901,106 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         [XmlArray("SubSteps")]
         [XmlArrayItem("Step")]
         public List<TestStep> SubSteps { get; set; }
+
+        #endregion
+
+        #region 循环控制属性
+
+        /// <summary>
+        /// For循环起始值（用于ForLoop类型）
+        /// </summary>
+        [XmlAttribute]
+        public int LoopStart { get; set; } = 0;
+
+        /// <summary>
+        /// For循环结束值（用于ForLoop类型）
+        /// </summary>
+        [XmlAttribute]
+        public int LoopEnd { get; set; } = 0;
+
+        /// <summary>
+        /// For循环步进值（用于ForLoop类型）
+        /// </summary>
+        [XmlAttribute]
+        public int LoopStep { get; set; } = 1;
+
+        /// <summary>
+        /// 循环计数器变量名
+        /// </summary>
+        [XmlAttribute]
+        public string LoopVariable { get; set; }
+
+        /// <summary>
+        /// ForEach循环的数组变量名
+        /// </summary>
+        [XmlAttribute]
+        public string ArrayVariable { get; set; }
+
+        /// <summary>
+        /// ForEach循环的当前元素变量名
+        /// </summary>
+        [XmlAttribute]
+        public string ElementVariable { get; set; }
+
+        /// <summary>
+        /// While循环条件表达式
+        /// </summary>
+        [XmlAttribute]
+        public string WhileCondition { get; set; }
+
+        /// <summary>
+        /// 最大循环次数（防止死循环）
+        /// </summary>
+        [XmlAttribute]
+        public int MaxIterations { get; set; } = 1000;
+
+        #endregion
+
+        #region 条件分支属性
+
+        /// <summary>
+        /// 步骤执行前置条件表达式
+        /// 如果条件不满足，步骤将被跳过
+        /// </summary>
+        [XmlElement("Precondition")]
+        public string Precondition { get; set; }
+
+        /// <summary>
+        /// 条件分支表达式（用于ConditionalBranch类型）
+        /// 支持表达式如：${Count} > 0, ${Result} == true
+        /// </summary>
+        [XmlElement("BranchCondition")]
+        public string BranchCondition { get; set; }
+
+        /// <summary>
+        /// 条件为真时执行的步骤列表
+        /// </summary>
+        [XmlArray("TrueSteps")]
+        [XmlArrayItem("Step")]
+        public List<TestStep> TrueSteps { get; set; }
+
+        /// <summary>
+        /// 条件为假时执行的步骤列表
+        /// </summary>
+        [XmlArray("FalseSteps")]
+        [XmlArrayItem("Step")]
+        public List<TestStep> FalseSteps { get; set; }
+
+        #endregion
+
+        #region 子序列调用属性
+
+        /// <summary>
+        /// 子序列ID（用于SubSequenceCall类型）
+        /// </summary>
+        [XmlAttribute]
+        public string SubSequenceId { get; set; }
+
+        /// <summary>
+        /// 子序列文件路径（如果子序列在外部文件中）
+        /// </summary>
+        [XmlAttribute]
+        public string SubSequenceFile { get; set; }
 
         #endregion
 

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -212,6 +213,144 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
                     }
                 }
             };
+        }
+
+        /// <summary>
+        /// 处理序列导入
+        /// </summary>
+        /// <param name="sequence">目标序列</param>
+        /// <param name="basePath">配置文件的基础路径</param>
+        public void ProcessImports(TestSequence sequence, string basePath = null)
+        {
+            if (sequence.Imports == null || sequence.Imports.Count == 0)
+                return;
+
+            foreach (var import in sequence.Imports)
+            {
+                try
+                {
+                    string importPath = import.File;
+                    
+                    // 处理相对路径
+                    if (!Path.IsPathRooted(importPath) && !string.IsNullOrEmpty(basePath))
+                    {
+                        importPath = Path.Combine(Path.GetDirectoryName(basePath), importPath);
+                    }
+
+                    if (!File.Exists(importPath))
+                    {
+                        throw new FileNotFoundException($"导入文件不存在: {importPath}");
+                    }
+
+                    var importedConfig = LoadConfig(importPath);
+
+                    switch (import.Type)
+                    {
+                        case ImportType.Variables:
+                            ImportVariables(sequence, importedConfig, import);
+                            break;
+
+                        case ImportType.Sequences:
+                            ImportSequences(importedConfig, import);
+                            break;
+
+                        case ImportType.All:
+                            ImportVariables(sequence, importedConfig, import);
+                            ImportSequences(importedConfig, import);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"处理导入失败 ({import.File}): {ex.Message}", ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 导入变量定义
+        /// </summary>
+        private void ImportVariables(TestSequence targetSequence, TestSequenceConfig sourceConfig, SequenceImport import)
+        {
+            // 获取要导入的变量（根据过滤条件）
+            var variableFilter = !string.IsNullOrEmpty(import.VariableFilter) 
+                ? import.VariableFilter.Split(',').Select(v => v.Trim()).ToList() 
+                : null;
+
+            foreach (var sourceSequence in sourceConfig.Sequences)
+            {
+                foreach (var variable in sourceSequence.Variables)
+                {
+                    // 应用过滤条件
+                    if (variableFilter != null && !variableFilter.Contains(variable.Name))
+                        continue;
+
+                    // 应用前缀
+                    string targetName = !string.IsNullOrEmpty(import.Prefix) 
+                        ? $"{import.Prefix}{variable.Name}" 
+                        : variable.Name;
+
+                    // 检查是否已存在
+                    var existingVar = targetSequence.Variables.FirstOrDefault(v => v.Name == targetName);
+                    if (existingVar != null)
+                    {
+                        if (import.OverwriteExisting)
+                        {
+                            targetSequence.Variables.Remove(existingVar);
+                        }
+                        else
+                        {
+                            continue; // 跳过已存在的变量
+                        }
+                    }
+
+                    // 创建新的变量副本
+                    var newVariable = new SequenceVariable
+                    {
+                        Name = targetName,
+                        Type = variable.Type,
+                        DefaultValue = variable.DefaultValue,
+                        Description = variable.Description,
+                        Scope = variable.Scope,
+                        ArraySize = variable.ArraySize
+                    };
+
+                    targetSequence.Variables.Add(newVariable);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 导入序列定义（注册供子序列调用）
+        /// </summary>
+        private void ImportSequences(TestSequenceConfig sourceConfig, SequenceImport import)
+        {
+            foreach (var sequence in sourceConfig.Sequences)
+            {
+                // 应用前缀
+                if (!string.IsNullOrEmpty(import.Prefix))
+                {
+                    sequence.ID = $"{import.Prefix}{sequence.ID}";
+                }
+
+                // 注册序列
+                SequenceExecutor.RegisterSequence(sequence);
+            }
+        }
+
+        /// <summary>
+        /// 加载配置并处理导入
+        /// </summary>
+        public TestSequenceConfig LoadConfigWithImports(string filePath)
+        {
+            var config = LoadConfig(filePath);
+
+            foreach (var sequence in config.Sequences)
+            {
+                ProcessImports(sequence, filePath);
+            }
+
+            return config;
         }
     }
 }

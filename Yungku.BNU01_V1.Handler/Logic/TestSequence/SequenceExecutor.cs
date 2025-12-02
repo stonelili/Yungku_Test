@@ -362,6 +362,66 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
             WriteLog("INFO", $"开始执行步骤 [{step.ID}] {step.Name}", step.Name);
 
+            // 检查前置条件
+            if (!string.IsNullOrEmpty(step.Precondition))
+            {
+                if (!EvaluateCondition(step.Precondition))
+                {
+                    step.Result = StepResult.Skipped;
+                    step.ResultMessage = $"前置条件不满足: {step.Precondition}";
+                    WriteLog("INFO", $"步骤跳过（前置条件不满足）: {step.Name}");
+                    step.EndTime = DateTime.Now;
+                    OnStepCompleted(new StepExecutionEventArgs
+                    {
+                        Step = step,
+                        StepIndex = stepIndex,
+                        TotalSteps = totalSteps,
+                        Result = step.Result,
+                        Message = step.ResultMessage,
+                        ExecutionTime = step.ExecutionTime
+                    });
+                    return;
+                }
+            }
+
+            // 根据步骤类型执行不同的逻辑
+            switch (step.Type)
+            {
+                case StepType.ForLoop:
+                    await ExecuteForLoopAsync(step, stepIndex, totalSteps);
+                    break;
+
+                case StepType.WhileLoop:
+                    await ExecuteWhileLoopAsync(step, stepIndex, totalSteps);
+                    break;
+
+                case StepType.ForEachLoop:
+                    await ExecuteForEachLoopAsync(step, stepIndex, totalSteps);
+                    break;
+
+                case StepType.ConditionalBranch:
+                    await ExecuteConditionalBranchAsync(step, stepIndex, totalSteps);
+                    break;
+
+                case StepType.SubSequenceCall:
+                    await ExecuteSubSequenceCallAsync(step, stepIndex, totalSteps);
+                    break;
+
+                case StepType.SequenceGroup:
+                    await ExecuteSequenceGroupAsync(step, stepIndex, totalSteps);
+                    break;
+
+                default:
+                    await ExecuteStandardStepAsync(step, stepIndex, totalSteps);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 执行标准步骤（非控制流步骤）
+        /// </summary>
+        private async Task ExecuteStandardStepAsync(TestStep step, int stepIndex, int totalSteps)
+        {
             int retryCount = 0;
             bool success = false;
 
@@ -418,6 +478,469 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
             WriteLog(step.Result == StepResult.Pass ? "INFO" : "WARN",
                 $"步骤完成 [{step.Result}] {step.Name}: {step.ActualValue} ({step.ExecutionTime:F0}ms)", step.Name);
+        }
+
+        /// <summary>
+        /// 执行For循环
+        /// </summary>
+        private async Task ExecuteForLoopAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            if (step.SubSteps == null || step.SubSteps.Count == 0)
+            {
+                step.Result = StepResult.Pass;
+                step.ResultMessage = "循环体为空";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            int start = step.LoopStart;
+            int end = step.LoopEnd;
+            int loopStep = step.LoopStep != 0 ? step.LoopStep : 1;
+            string loopVar = step.LoopVariable ?? "i";
+
+            WriteLog("INFO", $"开始For循环: {loopVar} = {start} to {end}, step = {loopStep}");
+
+            bool loopSuccess = true;
+            int iterationCount = 0;
+
+            for (int i = start; loopStep > 0 ? i <= end : i >= end; i += loopStep)
+            {
+                if (iterationCount >= step.MaxIterations)
+                {
+                    WriteLog("WARN", $"达到最大迭代次数: {step.MaxIterations}");
+                    break;
+                }
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                // 设置循环变量
+                SetVariable(loopVar, i, VariableScope.Local);
+
+                WriteLog("INFO", $"For循环迭代 {loopVar} = {i}");
+
+                // 执行子步骤
+                foreach (var subStep in step.SubSteps)
+                {
+                    if (!subStep.Enabled)
+                        continue;
+
+                    await ExecuteStepAsync(subStep, stepIndex, totalSteps);
+
+                    if (subStep.Result == StepResult.Fail || subStep.Result == StepResult.Error)
+                    {
+                        if (subStep.OnFail == FailAction.Abort)
+                        {
+                            loopSuccess = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!loopSuccess)
+                    break;
+
+                iterationCount++;
+            }
+
+            step.Result = loopSuccess ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"循环执行完成，共 {iterationCount} 次迭代";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 执行While循环
+        /// </summary>
+        private async Task ExecuteWhileLoopAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            if (step.SubSteps == null || step.SubSteps.Count == 0)
+            {
+                step.Result = StepResult.Pass;
+                step.ResultMessage = "循环体为空";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            WriteLog("INFO", $"开始While循环: {step.WhileCondition}");
+
+            bool loopSuccess = true;
+            int iterationCount = 0;
+
+            while (EvaluateCondition(step.WhileCondition))
+            {
+                if (iterationCount >= step.MaxIterations)
+                {
+                    WriteLog("WARN", $"达到最大迭代次数: {step.MaxIterations}");
+                    break;
+                }
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                WriteLog("INFO", $"While循环迭代 #{iterationCount + 1}");
+
+                // 执行子步骤
+                foreach (var subStep in step.SubSteps)
+                {
+                    if (!subStep.Enabled)
+                        continue;
+
+                    await ExecuteStepAsync(subStep, stepIndex, totalSteps);
+
+                    if (subStep.Result == StepResult.Fail || subStep.Result == StepResult.Error)
+                    {
+                        if (subStep.OnFail == FailAction.Abort)
+                        {
+                            loopSuccess = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!loopSuccess)
+                    break;
+
+                iterationCount++;
+            }
+
+            step.Result = loopSuccess ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"While循环完成，共 {iterationCount} 次迭代";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 执行ForEach循环
+        /// </summary>
+        private async Task ExecuteForEachLoopAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            if (step.SubSteps == null || step.SubSteps.Count == 0)
+            {
+                step.Result = StepResult.Pass;
+                step.ResultMessage = "循环体为空";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            // 获取数组变量
+            var arrayValue = GetVariableValue(step.ArrayVariable);
+            if (arrayValue == null || !(arrayValue is Array array))
+            {
+                step.Result = StepResult.Error;
+                step.ResultMessage = $"数组变量 {step.ArrayVariable} 不存在或不是数组";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            string elementVar = step.ElementVariable ?? "item";
+            string indexVar = step.LoopVariable ?? "index";
+
+            WriteLog("INFO", $"开始ForEach循环: {elementVar} in {step.ArrayVariable} (共 {array.Length} 个元素)");
+
+            bool loopSuccess = true;
+            int iterationCount = 0;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (iterationCount >= step.MaxIterations)
+                {
+                    WriteLog("WARN", $"达到最大迭代次数: {step.MaxIterations}");
+                    break;
+                }
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                object element = array.GetValue(i);
+                SetVariable(elementVar, element, VariableScope.Local);
+                SetVariable(indexVar, i, VariableScope.Local);
+
+                WriteLog("INFO", $"ForEach循环迭代 [{i}]: {elementVar} = {element}");
+
+                // 执行子步骤
+                foreach (var subStep in step.SubSteps)
+                {
+                    if (!subStep.Enabled)
+                        continue;
+
+                    await ExecuteStepAsync(subStep, stepIndex, totalSteps);
+
+                    if (subStep.Result == StepResult.Fail || subStep.Result == StepResult.Error)
+                    {
+                        if (subStep.OnFail == FailAction.Abort)
+                        {
+                            loopSuccess = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!loopSuccess)
+                    break;
+
+                iterationCount++;
+            }
+
+            step.Result = loopSuccess ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"ForEach循环完成，共 {iterationCount} 次迭代";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 执行条件分支
+        /// </summary>
+        private async Task ExecuteConditionalBranchAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            bool conditionResult = EvaluateCondition(step.BranchCondition);
+
+            WriteLog("INFO", $"条件分支评估: {step.BranchCondition} = {conditionResult}");
+
+            var stepsToExecute = conditionResult ? step.TrueSteps : step.FalseSteps;
+
+            if (stepsToExecute == null || stepsToExecute.Count == 0)
+            {
+                step.Result = StepResult.Pass;
+                step.ResultMessage = $"条件 = {conditionResult}, 无执行步骤";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            bool branchSuccess = true;
+
+            foreach (var subStep in stepsToExecute)
+            {
+                if (!subStep.Enabled)
+                    continue;
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                await ExecuteStepAsync(subStep, stepIndex, totalSteps);
+
+                if (subStep.Result == StepResult.Fail || subStep.Result == StepResult.Error)
+                {
+                    if (subStep.OnFail == FailAction.Abort)
+                    {
+                        branchSuccess = false;
+                        break;
+                    }
+                }
+            }
+
+            step.Result = branchSuccess ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"条件分支({conditionResult})执行完成";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 执行子序列调用
+        /// </summary>
+        private async Task ExecuteSubSequenceCallAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            TestSequence subSequence = null;
+
+            // 尝试从外部文件加载
+            if (!string.IsNullOrEmpty(step.SubSequenceFile))
+            {
+                try
+                {
+                    var loader = new Config.SequenceConfigLoader();
+                    var config = loader.LoadConfig(step.SubSequenceFile);
+                    
+                    if (!string.IsNullOrEmpty(step.SubSequenceId))
+                    {
+                        subSequence = config.GetSequence(step.SubSequenceId);
+                    }
+                    else if (config.Sequences.Count > 0)
+                    {
+                        subSequence = config.Sequences[0];
+                    }
+                }
+                catch (Exception ex)
+                {
+                    step.Result = StepResult.Error;
+                    step.ResultMessage = $"加载子序列文件失败: {ex.Message}";
+                    step.EndTime = DateTime.Now;
+                    return;
+                }
+            }
+            // 从当前配置中查找
+            else if (!string.IsNullOrEmpty(step.SubSequenceId))
+            {
+                // 需要从注册的序列中查找
+                subSequence = GetRegisteredSequence(step.SubSequenceId);
+            }
+
+            if (subSequence == null)
+            {
+                step.Result = StepResult.Error;
+                step.ResultMessage = $"未找到子序列: {step.SubSequenceId ?? step.SubSequenceFile}";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            WriteLog("INFO", $"开始执行子序列: {subSequence.Name}");
+
+            // 创建子执行器执行子序列
+            var subExecutor = new SequenceExecutor(_registry);
+            subExecutor.CurrentProduct = this.CurrentProduct;
+            subExecutor.CurrentModule = this.CurrentModule;
+            
+            // 复制上下文
+            foreach (var kvp in Context)
+            {
+                subExecutor.Context[kvp.Key] = kvp.Value;
+            }
+
+            // 订阅事件转发
+            subExecutor.Log += (s, e) => WriteLog(e.Level, $"[子序列] {e.Message}", e.StepName);
+            subExecutor.StepStarted += (s, e) => OnStepStarted(e);
+            subExecutor.StepCompleted += (s, e) => OnStepCompleted(e);
+
+            var result = await subExecutor.ExecuteAsync(subSequence, _cancellationTokenSource.Token);
+
+            step.Result = result.State == SequenceState.Completed ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"子序列执行完成: {result.Message}";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 执行步骤组
+        /// </summary>
+        private async Task ExecuteSequenceGroupAsync(TestStep step, int stepIndex, int totalSteps)
+        {
+            if (step.SubSteps == null || step.SubSteps.Count == 0)
+            {
+                step.Result = StepResult.Pass;
+                step.ResultMessage = "步骤组为空";
+                step.EndTime = DateTime.Now;
+                return;
+            }
+
+            WriteLog("INFO", $"开始执行步骤组: {step.Name}");
+
+            bool groupSuccess = true;
+
+            foreach (var subStep in step.SubSteps)
+            {
+                if (!subStep.Enabled)
+                    continue;
+
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                await ExecuteStepAsync(subStep, stepIndex, totalSteps);
+
+                if (subStep.Result == StepResult.Fail || subStep.Result == StepResult.Error)
+                {
+                    if (subStep.OnFail == FailAction.Abort)
+                    {
+                        groupSuccess = false;
+                        break;
+                    }
+                }
+            }
+
+            step.Result = groupSuccess ? StepResult.Pass : StepResult.Fail;
+            step.ResultMessage = $"步骤组执行完成，共 {step.SubSteps.Count} 个子步骤";
+            step.EndTime = DateTime.Now;
+
+            OnStepCompleted(new StepExecutionEventArgs
+            {
+                Step = step,
+                StepIndex = stepIndex,
+                TotalSteps = totalSteps,
+                Result = step.Result,
+                Message = step.ResultMessage,
+                ExecutionTime = step.ExecutionTime
+            });
+        }
+
+        /// <summary>
+        /// 已注册的序列（用于子序列调用）
+        /// </summary>
+        private static readonly Dictionary<string, TestSequence> _registeredSequences = new Dictionary<string, TestSequence>();
+        private static readonly object _seqLock = new object();
+
+        /// <summary>
+        /// 注册序列（供子序列调用使用）
+        /// </summary>
+        public static void RegisterSequence(TestSequence sequence)
+        {
+            if (sequence == null || string.IsNullOrEmpty(sequence.ID))
+                return;
+
+            lock (_seqLock)
+            {
+                _registeredSequences[sequence.ID] = sequence;
+            }
+        }
+
+        /// <summary>
+        /// 获取已注册的序列
+        /// </summary>
+        public static TestSequence GetRegisteredSequence(string id)
+        {
+            lock (_seqLock)
+            {
+                _registeredSequences.TryGetValue(id, out var sequence);
+                return sequence;
+            }
+        }
+
+        /// <summary>
+        /// 清除所有已注册的序列
+        /// </summary>
+        public static void ClearRegisteredSequences()
+        {
+            lock (_seqLock)
+            {
+                _registeredSequences.Clear();
+            }
         }
 
         /// <summary>
@@ -967,22 +1490,26 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
         /// <summary>
         /// 评估条件表达式
+        /// 支持的格式：
+        /// - ${变量名} > 值
+        /// - ${变量名} == 值
+        /// - ${变量名} != 值
+        /// - ${变量名} >= 值
+        /// - ${变量名} <= 值
+        /// - ${变量名} - 布尔变量直接作为条件
+        /// - !${变量名} - 取反
+        /// - ${变量名1} && ${变量名2} - 逻辑与
+        /// - ${变量名1} || ${变量名2} - 逻辑或
         /// </summary>
         private bool EvaluateCondition(string condition)
         {
             if (string.IsNullOrEmpty(condition))
                 return true;
 
-            // 简单的条件解析，支持基本的变量替换
             try
             {
-                string evaluatedCondition = condition;
-
-                // 替换上下文变量
-                foreach (var kvp in Context)
-                {
-                    evaluatedCondition = evaluatedCondition.Replace(kvp.Key, kvp.Value?.ToString());
-                }
+                // 首先解析所有变量引用
+                string evaluatedCondition = ResolveAllVariableReferences(condition);
 
                 // 简单的布尔表达式评估
                 if (evaluatedCondition.Equals("true", StringComparison.OrdinalIgnoreCase))
@@ -990,13 +1517,216 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 if (evaluatedCondition.Equals("false", StringComparison.OrdinalIgnoreCase))
                     return false;
 
-                // 其他复杂表达式暂时返回true
-                return true;
+                // 处理逻辑运算符
+                if (evaluatedCondition.Contains("&&"))
+                {
+                    var parts = evaluatedCondition.Split(new[] { "&&" }, StringSplitOptions.RemoveEmptyEntries);
+                    return parts.All(p => EvaluateSimpleCondition(p.Trim()));
+                }
+
+                if (evaluatedCondition.Contains("||"))
+                {
+                    var parts = evaluatedCondition.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+                    return parts.Any(p => EvaluateSimpleCondition(p.Trim()));
+                }
+
+                return EvaluateSimpleCondition(evaluatedCondition);
             }
-            catch
+            catch (Exception ex)
             {
-                return true;
+                WriteLog("WARN", $"条件表达式评估失败: {condition} - {ex.Message}");
+                return false;
             }
+        }
+
+        /// <summary>
+        /// 解析所有变量引用（包括表达式计算）
+        /// </summary>
+        private string ResolveAllVariableReferences(string value)
+        {
+            if (string.IsNullOrEmpty(value) || !value.Contains("${"))
+                return value;
+
+            string result = value;
+            int startIndex = 0;
+            
+            while ((startIndex = result.IndexOf("${", startIndex)) >= 0)
+            {
+                int endIndex = result.IndexOf("}", startIndex);
+                if (endIndex < 0)
+                    break;
+
+                string varExpr = result.Substring(startIndex + 2, endIndex - startIndex - 2);
+                object varValue = GetVariableValue(varExpr);
+                string replacement = varValue?.ToString() ?? "";
+
+                result = result.Substring(0, startIndex) + replacement + result.Substring(endIndex + 1);
+                startIndex += replacement.Length;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 评估简单的条件表达式
+        /// </summary>
+        private bool EvaluateSimpleCondition(string condition)
+        {
+            condition = condition.Trim();
+
+            // 处理取反
+            if (condition.StartsWith("!"))
+            {
+                return !EvaluateSimpleCondition(condition.Substring(1).Trim());
+            }
+
+            // 比较运算符
+            string[] operators = { ">=", "<=", "!=", "==", ">", "<" };
+            foreach (var op in operators)
+            {
+                int opIndex = condition.IndexOf(op);
+                if (opIndex > 0)
+                {
+                    string left = condition.Substring(0, opIndex).Trim();
+                    string right = condition.Substring(opIndex + op.Length).Trim();
+                    return EvaluateComparison(left, op, right);
+                }
+            }
+
+            // 作为布尔值评估
+            if (bool.TryParse(condition, out bool boolValue))
+                return boolValue;
+
+            // 非零数值视为true
+            if (double.TryParse(condition, out double numValue))
+                return numValue != 0;
+
+            // 非空字符串视为true
+            return !string.IsNullOrEmpty(condition);
+        }
+
+        /// <summary>
+        /// 评估比较表达式
+        /// </summary>
+        private bool EvaluateComparison(string left, string op, string right)
+        {
+            // 尝试作为数值比较
+            if (double.TryParse(left, out double leftNum) && double.TryParse(right, out double rightNum))
+            {
+                switch (op)
+                {
+                    case ">": return leftNum > rightNum;
+                    case "<": return leftNum < rightNum;
+                    case ">=": return leftNum >= rightNum;
+                    case "<=": return leftNum <= rightNum;
+                    case "==": return Math.Abs(leftNum - rightNum) < 0.00001;
+                    case "!=": return Math.Abs(leftNum - rightNum) >= 0.00001;
+                }
+            }
+
+            // 作为字符串比较
+            switch (op)
+            {
+                case "==": return left.Equals(right, StringComparison.OrdinalIgnoreCase);
+                case "!=": return !left.Equals(right, StringComparison.OrdinalIgnoreCase);
+                default: return false;
+            }
+        }
+
+        /// <summary>
+        /// 计算数学表达式
+        /// 支持的运算符：+, -, *, /, %, ^
+        /// </summary>
+        public object EvaluateExpression(string expression)
+        {
+            if (string.IsNullOrEmpty(expression))
+                return null;
+
+            try
+            {
+                // 首先解析变量引用
+                string resolvedExpr = ResolveAllVariableReferences(expression);
+
+                // 简单的数学表达式计算
+                return EvaluateMathExpression(resolvedExpr);
+            }
+            catch (Exception ex)
+            {
+                WriteLog("WARN", $"表达式计算失败: {expression} - {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 计算数学表达式（简单实现）
+        /// </summary>
+        private double EvaluateMathExpression(string expression)
+        {
+            expression = expression.Trim();
+
+            // 处理括号
+            while (expression.Contains("("))
+            {
+                int openParen = expression.LastIndexOf('(');
+                int closeParen = expression.IndexOf(')', openParen);
+                if (closeParen < 0)
+                    throw new ArgumentException("括号不匹配");
+
+                string innerExpr = expression.Substring(openParen + 1, closeParen - openParen - 1);
+                double innerResult = EvaluateMathExpression(innerExpr);
+                expression = expression.Substring(0, openParen) + innerResult.ToString() + expression.Substring(closeParen + 1);
+            }
+
+            // 处理加减运算（从右到左，确保正确的优先级）
+            for (int i = expression.Length - 1; i >= 0; i--)
+            {
+                if ((expression[i] == '+' || expression[i] == '-') && i > 0)
+                {
+                    // 确保不是负号
+                    char prevChar = expression[i - 1];
+                    if (char.IsDigit(prevChar) || prevChar == ')')
+                    {
+                        string left = expression.Substring(0, i);
+                        string right = expression.Substring(i + 1);
+                        double leftVal = EvaluateMathExpression(left);
+                        double rightVal = EvaluateMathExpression(right);
+                        return expression[i] == '+' ? leftVal + rightVal : leftVal - rightVal;
+                    }
+                }
+            }
+
+            // 处理乘除运算
+            for (int i = expression.Length - 1; i >= 0; i--)
+            {
+                if (expression[i] == '*' || expression[i] == '/' || expression[i] == '%')
+                {
+                    string left = expression.Substring(0, i);
+                    string right = expression.Substring(i + 1);
+                    double leftVal = EvaluateMathExpression(left);
+                    double rightVal = EvaluateMathExpression(right);
+                    switch (expression[i])
+                    {
+                        case '*': return leftVal * rightVal;
+                        case '/': return rightVal != 0 ? leftVal / rightVal : 0;
+                        case '%': return rightVal != 0 ? leftVal % rightVal : 0;
+                    }
+                }
+            }
+
+            // 处理幂运算
+            int powerIndex = expression.IndexOf('^');
+            if (powerIndex > 0)
+            {
+                string left = expression.Substring(0, powerIndex);
+                string right = expression.Substring(powerIndex + 1);
+                return Math.Pow(EvaluateMathExpression(left), EvaluateMathExpression(right));
+            }
+
+            // 返回数值
+            if (double.TryParse(expression.Trim(), out double result))
+                return result;
+
+            throw new ArgumentException($"无法解析表达式: {expression}");
         }
 
         /// <summary>
