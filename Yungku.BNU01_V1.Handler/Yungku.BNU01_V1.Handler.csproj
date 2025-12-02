@@ -263,7 +263,16 @@
     <Compile Include="Logic\StationAction\ActionOpenTest.cs" />
     <Compile Include="Logic\StationAction\ActionOutput.cs" />
     <Compile Include="Logic\StationAction\ActionPositiveNegative.cs" />
+    <Compile Include="Logic\StationAction\ActionSequenceTest.cs" />
     <Compile Include="Logic\StationAction\ActionTest.cs" />
+    <Compile Include="Logic\TestSequence\Attributes\TestMethodAttribute.cs" />
+    <Compile Include="Logic\TestSequence\Config\SequenceConfigLoader.cs" />
+    <Compile Include="Logic\TestSequence\Config\SequenceConfigSaver.cs" />
+    <Compile Include="Logic\TestSequence\SequenceExecutor.cs" />
+    <Compile Include="Logic\TestSequence\TestMethodRegistry.cs" />
+    <Compile Include="Logic\TestSequence\TestSequence.cs" />
+    <Compile Include="Logic\TestSequence\TestStep.cs" />
+    <Compile Include="Logic\TestMethods\CommonTestMethods.cs" />
     <Compile Include="Logic\Objects\HeadObject.cs" />
     <Compile Include="Logic\Objects\JigObject.cs" />
     <Compile Include="Logic\Objects\MachineBase.cs" />
@@ -362,6 +371,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\ActionCalculatorTests.cs" />
+    <Compile Include="Tests\TestSequenceTests.cs" />
     <Compile Include="YYSCommand.cs" />
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>

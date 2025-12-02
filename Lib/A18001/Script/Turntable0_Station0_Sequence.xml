@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestSequenceConfig Version="1.0" Name="左工位测试序列配置" CreatedTime="2024-01-01T00:00:00">
+  <Sequence ID="SEQ_LEFT_STATION" Name="左工位测试序列" Description="左工位的完整测试流程" Enabled="true" Version="1.0" Author="System" CreatedTime="2024-01-01T00:00:00" ModifiedTime="2024-01-01T00:00:00">
+    <PreCondition>HasProduct</PreCondition>
+    <Steps>
+      <Step ID="1" Name="初始化测试" Description="初始化测试环境" Type="Action" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Abort">
+        <TargetMethod Class="CommonTestMethods" Method="Initialize" />
+        <Parameters>
+          <Param Name="timeout" Type="int" Value="5000" />
+        </Parameters>
+      </Step>
+      <Step ID="2" Name="焦距测试" Description="测试模组焦距是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestFocalLength" />
+        <Parameters>
+          <Param Name="productIndex" Type="int" Value="0" />
+        </Parameters>
+        <Limits Lower="3.8" Upper="4.2" Unit="mm" Precision="3" CompareMode="GE_LE" />
+      </Step>
+      <Step ID="3" Name="色温测试" Description="测试LED色温是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestColorTemperature" />
+        <Limits Lower="2700" Upper="6500" Unit="K" Precision="0" CompareMode="GE_LE" />
+      </Step>
+      <Step ID="4" Name="亮度测试" Description="测试LED亮度是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestBrightness" />
+        <Parameters>
+          <Param Name="productIndex" Type="int" Value="0" />
+        </Parameters>
+        <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE" />
+      </Step>
+      <Step ID="5" Name="电流测试" Description="测试工作电流是否正常" Type="NumericTest" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestCurrent" />
+        <Parameters>
+          <Param Name="channel" Type="int" Value="0" />
+        </Parameters>
+        <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE" />
+      </Step>
+      <Step ID="6" Name="电压测试" Description="测试工作电压是否正常" Type="NumericTest" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestVoltage" />
+        <Parameters>
+          <Param Name="channel" Type="int" Value="0" />
+        </Parameters>
+        <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="2" CompareMode="GE_LE" />
+      </Step>
+      <Step ID="7" Name="二维码读取" Description="读取产品二维码信息" Type="StringTest" Enabled="true" Timeout="5000" RetryCount="1" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="ReadBarcode" />
+      </Step>
+      <Step ID="8" Name="脏污检测" Description="检测产品表面是否有脏污" Type="PassFail" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestContamination" />
+      </Step>
+      <Step ID="9" Name="清理测试" Description="清理测试环境" Type="Action" Enabled="true" Timeout="3000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="Cleanup" />
+      </Step>
+    </Steps>
+    <PostCondition>SaveResults</PostCondition>
+  </Sequence>
+</TestSequenceConfig>
