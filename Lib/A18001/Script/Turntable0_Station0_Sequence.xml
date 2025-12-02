@@ -2,6 +2,13 @@
 <TestSequenceConfig Version="1.0" Name="左工位测试序列配置" CreatedTime="2024-01-01T00:00:00">
   <Sequence ID="SEQ_LEFT_STATION" Name="左工位测试序列" Description="左工位的完整测试流程" Enabled="true" Version="1.0" Author="System" CreatedTime="2024-01-01T00:00:00" ModifiedTime="2024-01-01T00:00:00">
     <PreCondition>HasProduct</PreCondition>
+    <!-- 序列变量定义 - 类似TestStand的序列变量功能 -->
+    <Variables>
+      <Variable Name="ProductIndex" Type="int" DefaultValue="0" Description="当前产品索引" Scope="Sequence" />
+      <Variable Name="TestChannel" Type="int" DefaultValue="0" Description="测试通道" Scope="Sequence" />
+      <Variable Name="FocalLengthResult" Type="double" DefaultValue="0" Description="焦距测试结果" Scope="Sequence" />
+      <Variable Name="BarcodeResult" Type="string" DefaultValue="" Description="二维码读取结果" Scope="Sequence" />
+    </Variables>
     <Steps>
       <Step ID="1" Name="初始化测试" Description="初始化测试环境" Type="Action" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Abort">
         <TargetMethod Class="CommonTestMethods" Method="Initialize" />
@@ -9,10 +16,12 @@
           <Param Name="timeout" Type="int" Value="5000" />
         </Parameters>
       </Step>
-      <Step ID="2" Name="焦距测试" Description="测试模组焦距是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+      <!-- 演示变量引用：使用 ${变量名} 引用序列变量 -->
+      <Step ID="2" Name="焦距测试" Description="测试模组焦距是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue" ResultVariable="FocalLengthResult">
         <TargetMethod Class="CommonTestMethods" Method="TestFocalLength" />
         <Parameters>
-          <Param Name="productIndex" Type="int" Value="0" />
+          <!-- 使用变量引用替代硬编码值 -->
+          <Param Name="productIndex" Type="int" Value="${ProductIndex}" />
         </Parameters>
         <Limits Lower="3.8" Upper="4.2" Unit="mm" Precision="3" CompareMode="GE_LE" />
       </Step>
@@ -23,25 +32,26 @@
       <Step ID="4" Name="亮度测试" Description="测试LED亮度是否在规定范围内" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestBrightness" />
         <Parameters>
-          <Param Name="productIndex" Type="int" Value="0" />
+          <Param Name="productIndex" Type="int" Value="${ProductIndex}" />
         </Parameters>
         <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE" />
       </Step>
       <Step ID="5" Name="电流测试" Description="测试工作电流是否正常" Type="NumericTest" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestCurrent" />
         <Parameters>
-          <Param Name="channel" Type="int" Value="0" />
+          <Param Name="channel" Type="int" Value="${TestChannel}" />
         </Parameters>
         <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE" />
       </Step>
       <Step ID="6" Name="电压测试" Description="测试工作电压是否正常" Type="NumericTest" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestVoltage" />
         <Parameters>
-          <Param Name="channel" Type="int" Value="0" />
+          <Param Name="channel" Type="int" Value="${TestChannel}" />
         </Parameters>
         <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="2" CompareMode="GE_LE" />
       </Step>
-      <Step ID="7" Name="二维码读取" Description="读取产品二维码信息" Type="StringTest" Enabled="true" Timeout="5000" RetryCount="1" OnFail="Continue">
+      <!-- 演示结果存储：使用 ResultVariable 将结果存储到变量 -->
+      <Step ID="7" Name="二维码读取" Description="读取产品二维码信息" Type="StringTest" Enabled="true" Timeout="5000" RetryCount="1" OnFail="Continue" ResultVariable="BarcodeResult">
         <TargetMethod Class="CommonTestMethods" Method="ReadBarcode" />
       </Step>
       <Step ID="8" Name="脏污检测" Description="检测产品表面是否有脏污" Type="PassFail" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">

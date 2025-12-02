@@ -80,6 +80,18 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
         #endregion
 
+        #region 序列变量
+
+        /// <summary>
+        /// 序列变量列表 - 类似TestStand的序列变量
+        /// 可以在步骤参数中通过${变量名}引用
+        /// </summary>
+        [XmlArray("Variables")]
+        [XmlArrayItem("Variable")]
+        public List<SequenceVariable> Variables { get; set; } = new List<SequenceVariable>();
+
+        #endregion
+
         #region 步骤列表
 
         /// <summary>
@@ -299,6 +311,95 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
         #endregion
 
+        #region 变量管理方法
+
+        /// <summary>
+        /// 添加序列变量
+        /// </summary>
+        public void AddVariable(SequenceVariable variable)
+        {
+            if (variable == null)
+                throw new ArgumentNullException(nameof(variable));
+
+            if (Variables.Any(v => v.Name == variable.Name))
+                throw new ArgumentException($"变量 '{variable.Name}' 已存在");
+
+            Variables.Add(variable);
+            ModifiedTime = DateTime.Now;
+        }
+
+        /// <summary>
+        /// 添加序列变量（简化版）
+        /// </summary>
+        public void AddVariable(string name, string type, string defaultValue = null, string description = null)
+        {
+            AddVariable(new SequenceVariable
+            {
+                Name = name,
+                Type = type,
+                DefaultValue = defaultValue,
+                Description = description
+            });
+        }
+
+        /// <summary>
+        /// 获取变量
+        /// </summary>
+        public SequenceVariable GetVariable(string name)
+        {
+            return Variables.FirstOrDefault(v => v.Name == name);
+        }
+
+        /// <summary>
+        /// 获取变量值
+        /// </summary>
+        public object GetVariableValue(string name)
+        {
+            var variable = GetVariable(name);
+            return variable?.CurrentValue ?? variable?.GetTypedDefaultValue();
+        }
+
+        /// <summary>
+        /// 设置变量值
+        /// </summary>
+        public bool SetVariableValue(string name, object value)
+        {
+            var variable = GetVariable(name);
+            if (variable == null)
+                return false;
+
+            variable.CurrentValue = value;
+            return true;
+        }
+
+        /// <summary>
+        /// 删除变量
+        /// </summary>
+        public bool RemoveVariable(string name)
+        {
+            var variable = GetVariable(name);
+            if (variable != null)
+            {
+                Variables.Remove(variable);
+                ModifiedTime = DateTime.Now;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 重置所有变量为默认值
+        /// </summary>
+        public void ResetVariables()
+        {
+            foreach (var variable in Variables)
+            {
+                variable.Reset();
+            }
+        }
+
+        #endregion
+
         #region 状态管理方法
 
         /// <summary>
@@ -312,10 +413,14 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             EndTime = DateTime.MinValue;
             ErrorMessage = null;
 
+            // 重置所有步骤
             foreach (var step in Steps)
             {
                 step.Reset();
             }
+
+            // 重置所有变量为默认值
+            ResetVariables();
         }
 
         /// <summary>

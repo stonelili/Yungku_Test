@@ -53,6 +53,9 @@ namespace Yungku.BNU01_V1.Handler.Tests
             // 测试执行器
             TestSequenceExecutorBasic();
 
+            // 测试变量功能
+            TestSequenceVariables();
+
             // 输出测试摘要
             testResults.AppendLine();
             testResults.AppendLine("========================================");
@@ -426,6 +429,77 @@ namespace Yungku.BNU01_V1.Handler.Tests
             catch (Exception ex)
             {
                 LogResult("执行器基础测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        #endregion
+
+        #region 变量功能测试
+
+        private void TestSequenceVariables()
+        {
+            BeginTest("序列变量功能测试");
+
+            try
+            {
+                // 测试 SequenceVariable 类
+                var variable = new SequenceVariable("testVar", "int", "100");
+                AssertTrue("变量名称正确", variable.Name == "testVar");
+                AssertTrue("变量类型正确", variable.Type == "int");
+                AssertTrue("变量默认值正确", variable.DefaultValue == "100");
+
+                // 测试类型转换
+                var typedValue = variable.GetTypedDefaultValue();
+                AssertTrue("整数类型转换正确", typedValue is int && (int)typedValue == 100);
+
+                // 测试序列变量管理
+                var sequence = new TestSequence { ID = "SEQ_VAR_TEST", Name = "变量测试序列" };
+                sequence.AddVariable("ProductIndex", "int", "0", "产品索引");
+                sequence.AddVariable("TestResult", "double", "0.0", "测试结果");
+                sequence.AddVariable("Barcode", "string", "", "二维码");
+
+                AssertTrue("序列变量数量正确", sequence.Variables.Count == 3);
+
+                // 测试获取变量
+                var productIndexVar = sequence.GetVariable("ProductIndex");
+                AssertTrue("获取变量成功", productIndexVar != null);
+                AssertTrue("变量类型正确", productIndexVar.Type == "int");
+
+                // 测试设置变量值
+                bool setResult = sequence.SetVariableValue("TestResult", 4.5);
+                AssertTrue("设置变量值成功", setResult);
+
+                var testResultValue = sequence.GetVariableValue("TestResult");
+                AssertTrue("获取变量值正确", testResultValue != null && (double)testResultValue == 4.5);
+
+                // 测试变量重置
+                sequence.ResetVariables();
+                var resetValue = sequence.GetVariableValue("TestResult");
+                AssertTrue("变量重置成功", resetValue != null && Math.Abs((double)resetValue) < 0.001);
+
+                // 测试变量引用解析（在步骤参数中使用 ${variableName}）
+                sequence.SetVariableValue("ProductIndex", 5);
+                var step = new TestStep
+                {
+                    ID = "1",
+                    Name = "测试步骤",
+                    ResultVariable = "TestResult"
+                };
+                step.AddParameter("index", "string", "${ProductIndex}");
+
+                // 验证 ResultVariable 属性
+                AssertTrue("ResultVariable 设置正确", step.ResultVariable == "TestResult");
+
+                // 测试删除变量
+                bool removeResult = sequence.RemoveVariable("Barcode");
+                AssertTrue("删除变量成功", removeResult);
+                AssertTrue("变量已删除", sequence.Variables.Count == 2);
+            }
+            catch (Exception ex)
+            {
+                LogResult("变量功能测试", false, ex.Message);
             }
 
             EndTest();

@@ -357,6 +357,10 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
 
                     // 评估结果
                     EvaluateStepResult(step, result);
+
+                    // 存储结果到变量（如果指定了ResultVariable）
+                    StoreResultToVariable(step);
+
                     success = step.Result == StepResult.Pass;
 
                     if (!success && retryCount < step.RetryCount)
@@ -469,24 +473,44 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 var stepParam = step.Parameters.FirstOrDefault(p => p.Name == paramInfo.Name);
                 if (stepParam != null)
                 {
-                    value = ConvertValue(stepParam.GetTypedValue(), paramInfo.ParameterType);
+                    // 解析变量引用（如 ${variableName}）
+                    var resolvedValue = ResolveVariableReferences(stepParam.Value);
+                    if (resolvedValue != stepParam.Value)
+                    {
+                        // 如果值被解析了，尝试转换类型
+                        value = ConvertValue(resolvedValue, paramInfo.ParameterType);
+                    }
+                    else
+                    {
+                        value = ConvertValue(stepParam.GetTypedValue(), paramInfo.ParameterType);
+                    }
                 }
-                // 尝试从上下文获取
-                else if (Context.TryGetValue(paramInfo.Name, out var contextValue))
+                // 尝试从序列变量获取
+                else if (_currentSequence != null)
+                {
+                    var seqVar = _currentSequence.GetVariable(paramInfo.Name);
+                    if (seqVar != null)
+                    {
+                        value = ConvertValue(seqVar.CurrentValue ?? seqVar.GetTypedDefaultValue(), paramInfo.ParameterType);
+                    }
+                }
+
+                // 如果还是没有值，尝试从上下文获取
+                if (value == null && Context.TryGetValue(paramInfo.Name, out var contextValue))
                 {
                     value = ConvertValue(contextValue, paramInfo.ParameterType);
                 }
                 // 特殊类型处理
-                else if (paramInfo.ParameterType == typeof(Product))
+                else if (value == null && paramInfo.ParameterType == typeof(Product))
                 {
                     value = CurrentProduct;
                 }
-                else if (paramInfo.ParameterType == typeof(Module))
+                else if (value == null && paramInfo.ParameterType == typeof(Module))
                 {
                     value = CurrentModule;
                 }
                 // 使用默认值
-                else if (paramInfo.HasDefaultValue)
+                else if (value == null && paramInfo.HasDefaultValue)
                 {
                     value = paramInfo.DefaultValue;
                 }
@@ -495,6 +519,90 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             }
 
             return args;
+        }
+
+        /// <summary>
+        /// 解析变量引用 - 将 ${variableName} 替换为实际值
+        /// </summary>
+        private object ResolveVariableReferences(string value)
+        {
+            if (string.IsNullOrEmpty(value) || !value.Contains("${"))
+                return value;
+
+            // 检查是否是纯变量引用 ${variableName}
+            if (value.StartsWith("${") && value.EndsWith("}") && value.IndexOf("${", 2) < 0)
+            {
+                string varName = value.Substring(2, value.Length - 3);
+                return GetVariableValue(varName);
+            }
+
+            // 处理字符串中的多个变量引用
+            string result = value;
+            int startIndex = 0;
+            while ((startIndex = result.IndexOf("${", startIndex)) >= 0)
+            {
+                int endIndex = result.IndexOf("}", startIndex);
+                if (endIndex < 0)
+                    break;
+
+                string varName = result.Substring(startIndex + 2, endIndex - startIndex - 2);
+                object varValue = GetVariableValue(varName);
+                string replacement = varValue?.ToString() ?? "";
+
+                result = result.Substring(0, startIndex) + replacement + result.Substring(endIndex + 1);
+                startIndex += replacement.Length;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 获取变量值（先从序列变量获取，再从上下文获取）
+        /// </summary>
+        private object GetVariableValue(string name)
+        {
+            // 首先从序列变量获取
+            if (_currentSequence != null)
+            {
+                var seqVar = _currentSequence.GetVariable(name);
+                if (seqVar != null)
+                {
+                    return seqVar.CurrentValue ?? seqVar.GetTypedDefaultValue();
+                }
+            }
+
+            // 然后从上下文获取
+            if (Context.TryGetValue(name, out var contextValue))
+            {
+                return contextValue;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 存储步骤结果到变量
+        /// </summary>
+        private void StoreResultToVariable(TestStep step)
+        {
+            if (string.IsNullOrEmpty(step.ResultVariable) || _currentSequence == null)
+                return;
+
+            var variable = _currentSequence.GetVariable(step.ResultVariable);
+            if (variable == null)
+            {
+                // 自动创建变量
+                variable = new SequenceVariable
+                {
+                    Name = step.ResultVariable,
+                    Type = step.ActualValue?.GetType().Name.ToLower() ?? "string"
+                };
+                _currentSequence.Variables.Add(variable);
+                WriteLog("INFO", $"自动创建变量: {step.ResultVariable}");
+            }
+
+            variable.CurrentValue = step.ActualValue;
+            WriteLog("INFO", $"存储结果到变量: {step.ResultVariable} = {step.ActualValue}");
         }
 
         /// <summary>

@@ -238,6 +238,146 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
     }
 
     /// <summary>
+    /// 序列级变量定义 - 类似TestStand的序列变量
+    /// 可以在配置中定义变量，并在步骤参数中通过${变量名}引用
+    /// </summary>
+    [Serializable]
+    public class SequenceVariable
+    {
+        /// <summary>
+        /// 变量名称
+        /// </summary>
+        [XmlAttribute]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 变量类型 (string, int, double, bool, etc.)
+        /// </summary>
+        [XmlAttribute]
+        public string Type { get; set; } = "string";
+
+        /// <summary>
+        /// 默认值
+        /// </summary>
+        [XmlAttribute]
+        public string DefaultValue { get; set; }
+
+        /// <summary>
+        /// 变量描述
+        /// </summary>
+        [XmlAttribute]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// 变量作用域 (Sequence=序列级, Step=步骤级, Global=全局)
+        /// </summary>
+        [XmlAttribute]
+        public string Scope { get; set; } = "Sequence";
+
+        /// <summary>
+        /// 当前值（运行时）
+        /// </summary>
+        [XmlIgnore]
+        public object CurrentValue { get; set; }
+
+        public SequenceVariable()
+        {
+        }
+
+        public SequenceVariable(string name, string type, string defaultValue = null)
+        {
+            Name = name;
+            Type = type;
+            DefaultValue = defaultValue;
+        }
+
+        /// <summary>
+        /// 获取转换后的默认值
+        /// </summary>
+        public object GetTypedDefaultValue()
+        {
+            if (string.IsNullOrEmpty(DefaultValue))
+                return GetDefaultForType();
+
+            return ConvertToType(DefaultValue);
+        }
+
+        /// <summary>
+        /// 将字符串值转换为变量类型
+        /// </summary>
+        public object ConvertToType(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return GetDefaultForType();
+
+            switch (Type.ToLower())
+            {
+                case "int":
+                case "int32":
+                    return int.Parse(value);
+                case "long":
+                case "int64":
+                    return long.Parse(value);
+                case "double":
+                    return double.Parse(value);
+                case "float":
+                case "single":
+                    return float.Parse(value);
+                case "bool":
+                case "boolean":
+                    return bool.Parse(value);
+                case "decimal":
+                    return decimal.Parse(value);
+                case "string":
+                default:
+                    return value;
+            }
+        }
+
+        /// <summary>
+        /// 获取类型的默认值
+        /// </summary>
+        private object GetDefaultForType()
+        {
+            switch (Type.ToLower())
+            {
+                case "int":
+                case "int32":
+                    return 0;
+                case "long":
+                case "int64":
+                    return 0L;
+                case "double":
+                    return 0.0;
+                case "float":
+                case "single":
+                    return 0f;
+                case "bool":
+                case "boolean":
+                    return false;
+                case "decimal":
+                    return 0m;
+                case "string":
+                default:
+                    return "";
+            }
+        }
+
+        /// <summary>
+        /// 重置为默认值
+        /// </summary>
+        public void Reset()
+        {
+            CurrentValue = GetTypedDefaultValue();
+        }
+
+        public override string ToString()
+        {
+            return $"{Name}({Type})={CurrentValue ?? DefaultValue}";
+        }
+    }
+
+    /// <summary>
     /// 目标方法信息
     /// </summary>
     [Serializable]
@@ -421,6 +561,17 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         [XmlArray("Parameters")]
         [XmlArrayItem("Param")]
         public List<StepParameter> Parameters { get; set; } = new List<StepParameter>();
+
+        #endregion
+
+        #region 结果存储
+
+        /// <summary>
+        /// 结果存储到变量名 - 将步骤执行结果存储到指定的序列变量中
+        /// 类似TestStand的ResultVariable功能
+        /// </summary>
+        [XmlAttribute]
+        public string ResultVariable { get; set; }
 
         #endregion
 
