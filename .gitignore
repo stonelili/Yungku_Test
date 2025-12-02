@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Package management
+packages/
+*.nupkg
+project.lock.json
+
+# Build artifacts
+*.exe
+*.dll
+*.pdb
+
+# IDE specific
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
