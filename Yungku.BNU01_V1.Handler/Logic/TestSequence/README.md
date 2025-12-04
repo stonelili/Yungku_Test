@@ -474,8 +474,119 @@ actionSequenceTest.SequenceId = sequenceId;
 | 老化循环测试 | WhileLoop + StartMode.Loop | `MaxIterations`, `WhileCondition` |
 | 多产品类型选择 | 条件分支 / 工单设置 | `BranchCondition`, `ProductName` |
 
+## 💡 其他重要测试功能考虑
+
+以下是测试系统中可能需要考虑但容易被忽略的功能点：
+
+### 1. 数据管理与追溯
+
+| 功能 | 当前状态 | 说明 |
+|------|----------|------|
+| 二维码/条码扫描 | ✅ 已支持 | `FunctionSwitch.CodeScannerEnabled`, `ReadBarcode()` |
+| 测试数据保存 | ✅ 已支持 | `FunctionSwitch.DataIsSave`, CSV日志记录 |
+| 产品追溯 | ⚠️ 基础支持 | `TestedProduceBarcode` 记录已测产品 |
+| MES/SFC对接 | ❓ 可扩展 | 建议通过自定义测试方法对接 |
+| 数据库存储 | ❓ 可扩展 | 建议添加数据库写入测试方法 |
+
+### 2. 质量控制
+
+| 功能 | 当前状态 | 说明 |
+|------|----------|------|
+| NG代码管理 | ✅ 已支持 | `IgnoreCodes`, `PassCodes` 配置 |
+| 连续NG报警 | ✅ 已支持 | `GeneralSettings.SameTypeNgCount` |
+| 良率统计 | ✅ 已支持 | FormAuto 左右工位独立统计 |
+| SPC统计分析 | ❓ 可扩展 | 可添加统计分析测试方法 |
+| CPK/PPK计算 | ❓ 可扩展 | 可添加能力指数计算方法 |
+
+### 3. 安全与权限
+
+| 功能 | 当前状态 | 说明 |
+|------|----------|------|
+| 用户权限控制 | ✅ 已支持 | `Permissions` 类定义权限 |
+| 安全门检查 | ✅ 已支持 | `FunctionSwitch.DoorStateCheck` |
+| 安全光栅 | ✅ 已支持 | `FunctionSwitch.GratingStateCheck` |
+| 治具关盖检查 | ✅ 已支持 | `FunctionSwitch.SceneStateCheck` |
+
+### 4. 测试流程控制
+
+| 功能 | 当前状态 | 配置位置 |
+|------|----------|----------|
+| 重试机制 | ✅ 已支持 | `TestStep.RetryCount` |
+| 超时控制 | ✅ 已支持 | `TestStep.Timeout` |
+| 条件跳过 | ✅ 已支持 | `TestStep.Precondition` |
+| 失败处理策略 | ✅ 已支持 | `TestStep.OnFail` (Continue/Abort/GotoStep) |
+| 测试暂停/恢复 | ✅ 已支持 | `SequenceExecutor.Pause()/Resume()` |
+| 单步调试 | ✅ 已支持 | `SequenceExecutor.SingleStepMode` |
+
+### 5. 设备校准与维护
+
+| 功能 | 建议实现方式 |
+|------|-------------|
+| 设备校准流程 | 创建独立的 `SEQ_CALIBRATION` 序列 |
+| 定期保养提醒 | 使用变量记录运行次数，配合条件分支 |
+| 设备预热 | 在序列开始添加预热等待步骤 |
+
+### 6. 报警与通知
+
+| 功能 | 当前状态 | 说明 |
+|------|----------|------|
+| 声光报警 | ✅ 已支持 | 三色灯控制 `ActionTricolorLight` |
+| 弹窗提示 | ✅ 已支持 | `GeneralSettings.ShowAlarmsForm` |
+| 测试结果弹窗 | ✅ 已支持 | `GeneralSettings.ShowResultForm` |
+| 邮件/短信通知 | ❓ 可扩展 | 可添加通知测试方法 |
+
+### 7. 其他扩展功能建议
+
+```xml
+<!-- 示例：设备预热检查 -->
+<Step ID="WARMUP_CHECK" Name="设备预热检查" Type="ConditionalBranch">
+  <BranchCondition>${RunCount} &lt; 1</BranchCondition>
+  <TrueSteps>
+    <Step ID="WARMUP_WAIT" Name="预热等待" Type="Action">
+      <TargetMethod Class="CommonTestMethods" Method="Delay"/>
+      <Parameters>
+        <Param Name="milliseconds" Value="300000"/>
+      </Parameters>
+    </Step>
+  </TrueSteps>
+</Step>
+
+<!-- 示例：定期校准提醒 -->
+<Step ID="CALIBRATION_REMINDER" Name="校准提醒检查" Type="ConditionalBranch">
+  <BranchCondition>${TotalTestCount} % 1000 == 0</BranchCondition>
+  <TrueSteps>
+    <Step ID="SHOW_CALIBRATION_ALERT" Name="显示校准提醒" Type="Action">
+      <TargetMethod Class="CommonTestMethods" Method="ShowAlert"/>
+      <Parameters>
+        <Param Name="message" Value="已测试1000次，建议进行设备校准"/>
+      </Parameters>
+    </Step>
+  </TrueSteps>
+</Step>
+```
+
+### 8. 测试数据导出
+
+系统已支持CSV数据导出功能，可通过以下配置启用：
+
+```csharp
+// 自动导出UPH数据
+GeneralSettings.IsUseExportProductData = YesNo.Yes;
+
+// 设置早晚班数据生成时间
+GeneralSettings.MorningProductDataTime = new DateTime(...);
+GeneralSettings.NightProductDataTime = new DateTime(...);
+```
+
+数据导出路径：`.\CSVLog\`
+
 ## 版本历史
 
+- **v1.2** - 功能全景
+  - 添加其他重要测试功能考虑清单
+  - 添加数据管理、质量控制、安全权限等功能说明
+  - 添加设备校准、报警通知等扩展功能建议
+  
 - **v1.1** - 高级配置场景
   - 添加多工位并行测试说明
   - 添加老化测试配置示例
