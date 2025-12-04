@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Yungku.BNU01_V1.Handler.Logic.TestSequence;
 
 namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
 {
