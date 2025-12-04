@@ -304,8 +304,186 @@ foreach (var suggestion in report.Suggestions)
 5. **使用变量存储中间结果** - 设置 `ResultVariable` 属性
 6. **验证配置文件** - 使用 `SequenceConfigValidator` 在部署前验证
 
+## 🏭 高级配置场景
+
+### 多工位并行测试配置
+
+对于拥有多个工位（如20个工位）同时测试多个产品的场景，系统支持以下配置：
+
+#### 工位配置结构
+
+系统通过 `Turntable -> Station` 层级结构管理工位：
+
+```
+Turntable0
+├── Station0  --> Turntable0_Station0_SequenceFile.xml
+├── Station1  --> Turntable0_Station1_SequenceFile.xml
+├── Station2  --> Turntable0_Station2_SequenceFile.xml
+...
+└── Station7  --> Turntable0_Station7_SequenceFile.xml
+```
+
+每个工位可以独立配置其测试序列文件路径（在 `FileStore.cs` 中定义）。
+
+#### 配对测试（2个产品同时测试）
+
+对于20个工位但只测试2种产品的场景，建议配置方案：
+
+| 工位编号 | 产品类型 | 序列文件 |
+|---------|----------|---------|
+| Station0, 2, 4... | 产品A | SEQ_PRODUCT_A |
+| Station1, 3, 5... | 产品B | SEQ_PRODUCT_B |
+
+```xml
+<!-- 根据工位奇偶分配不同产品测试 -->
+<Sequence ID="SEQ_PRODUCT_A" Name="A产品测试序列">
+  <Variables>
+    <Variable Name="ProductType" Type="string" DefaultValue="TypeA"/>
+  </Variables>
+  <Steps>
+    <Step ID="A_TEST" Name="[TypeA] 电压测试" .../>
+  </Steps>
+</Sequence>
+
+<Sequence ID="SEQ_PRODUCT_B" Name="B产品测试序列">
+  <Variables>
+    <Variable Name="ProductType" Type="string" DefaultValue="TypeB"/>
+  </Variables>
+  <Steps>
+    <Step ID="B_TEST" Name="[TypeB] 电流测试" .../>
+  </Steps>
+</Sequence>
+```
+
+### 老化测试（多轮循环测试）
+
+系统支持通过 `StartMode.Loop` 启动模式实现老化测试的多轮循环执行。
+
+#### 配置方法
+
+1. **在 GeneralSettings 中设置启动模式**：
+   ```csharp
+   GeneralSettings.StartMode = StartMode.Loop; // 循环跑机模式
+   ```
+
+2. **序列内使用循环步骤**：
+   ```xml
+   <!-- 老化测试序列 - 支持多轮测试 -->
+   <Sequence ID="SEQ_AGING" Name="老化测试序列">
+     <Variables>
+       <Variable Name="TestRound" Type="int" DefaultValue="0" Description="当前测试轮次"/>
+       <Variable Name="MaxRounds" Type="int" DefaultValue="100" Description="最大测试轮次"/>
+     </Variables>
+     
+     <Steps>
+       <!-- 外层循环：控制测试轮次 -->
+       <Step ID="AGING_LOOP" Name="老化循环" Type="WhileLoop" 
+             WhileCondition="${TestRound} &lt; ${MaxRounds}" MaxIterations="1000">
+         <SubSteps>
+           <!-- 更新轮次计数 -->
+           <Step ID="UPDATE_ROUND" Name="更新轮次" Type="Action">
+             <Expression>${TestRound} = ${TestRound} + 1</Expression>
+           </Step>
+           
+           <!-- 记录当前轮次 -->
+           <Step ID="LOG_ROUND" Name="[Round${TestRound}] 轮次开始" Type="Action">
+             <TargetMethod Class="CommonTestMethods" Method="LogMessage"/>
+             <Parameters>
+               <Param Name="message" Value="开始第${TestRound}轮老化测试"/>
+             </Parameters>
+           </Step>
+           
+           <!-- 实际测试步骤 -->
+           <Step ID="AGING_TEST1" Name="[Round${TestRound}] 电压测试" Type="NumericTest">
+             <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+             <Limits Lower="2.8" Upper="3.8" Unit="V"/>
+           </Step>
+           
+           <!-- 延时等待下一轮 -->
+           <Step ID="WAIT_NEXT" Name="等待下一轮" Type="Action">
+             <TargetMethod Class="CommonTestMethods" Method="Delay"/>
+             <Parameters>
+               <Param Name="milliseconds" Type="int" Value="60000"/>
+             </Parameters>
+           </Step>
+         </SubSteps>
+       </Step>
+     </Steps>
+   </Sequence>
+   ```
+
+3. **老化测试界面显示**：
+   - 每轮测试结果会带有 `[RoundN]` 前缀
+   - 统计面板累计显示所有轮次的 Pass/Fail 计数
+
+### 产品类型选择
+
+当一台机器需要测试多种产品类型时，可通过以下方式实现产品选择：
+
+#### 方案1：通过工单设置选择产品
+
+在 `GeneralSettings.ProductName` 中设置当前生产的机种名称，测试序列根据此设置加载对应的配置：
+
+```csharp
+// 读取当前产品类型
+string productType = MyApp.Config.GeneralSettings.ProductName;
+
+// 根据产品类型选择序列ID
+string sequenceId = productType switch
+{
+    "ProductA" => "SEQ_PRODUCT_A",
+    "ProductB" => "SEQ_PRODUCT_B",
+    "ProductC" => "SEQ_PRODUCT_C",
+    _ => "SEQ_DEFAULT"
+};
+
+actionSequenceTest.SequenceId = sequenceId;
+```
+
+#### 方案2：XML配置中使用条件分支
+
+```xml
+<!-- 根据产品类型执行不同测试 -->
+<Step ID="PRODUCT_SELECT" Name="产品类型判断" Type="ConditionalBranch">
+  <BranchCondition>${ProductType} == "TypeA"</BranchCondition>
+  <TrueSteps>
+    <Step ID="TYPE_A_TESTS" Name="[TypeA] 完整测试" Type="SubSequenceCall">
+      <SubSequenceId>SEQ_TYPE_A</SubSequenceId>
+    </Step>
+  </TrueSteps>
+  <FalseSteps>
+    <Step ID="TYPE_B_TESTS" Name="[TypeB] 完整测试" Type="SubSequenceCall">
+      <SubSequenceId>SEQ_TYPE_B</SubSequenceId>
+    </Step>
+  </FalseSteps>
+</Step>
+```
+
+#### 方案3：界面产品选择器（建议扩展）
+
+如需更直观的产品选择功能，建议在 FormAuto 或 FormSetting 中添加产品选择下拉框：
+
+1. 读取可用的产品配置列表
+2. 用户选择产品类型
+3. 系统自动加载对应的测试序列
+
+### 配置汇总表
+
+| 测试场景 | 配置方式 | 关键设置 |
+|----------|----------|----------|
+| 单产品单工位 | 默认配置 | `SequenceId` |
+| 左右工位各一产品 | 工位独立配置 | `stationIndex` |
+| 多工位配对测试 | 工位序列分配 | 每个 Station 独立 Sequence 文件 |
+| 老化循环测试 | WhileLoop + StartMode.Loop | `MaxIterations`, `WhileCondition` |
+| 多产品类型选择 | 条件分支 / 工单设置 | `BranchCondition`, `ProductName` |
+
 ## 版本历史
 
+- **v1.1** - 高级配置场景
+  - 添加多工位并行测试说明
+  - 添加老化测试配置示例
+  - 添加产品类型选择方案
+  
 - **v1.0** - 初始版本
   - 添加示例配置文件
   - 添加配置验证器

@@ -305,4 +305,100 @@
     </Steps>
   </Sequence>
   
+  <!-- 老化测试序列示例 - 支持多轮循环测试 -->
+  <Sequence ID="SEQ_AGING" Name="老化测试序列" Description="支持多轮循环的老化/烧机测试" Enabled="true" Version="1.0">
+    <Variables>
+      <Variable Name="TestRound" Type="int" DefaultValue="0" Description="当前测试轮次"/>
+      <Variable Name="MaxRounds" Type="int" DefaultValue="10" Description="最大测试轮次（可配置）"/>
+      <Variable Name="RoundPassCount" Type="int" DefaultValue="0" Description="每轮通过计数"/>
+      <Variable Name="RoundFailCount" Type="int" DefaultValue="0" Description="每轮失败计数"/>
+    </Variables>
+    
+    <Steps>
+      <!-- 初始化 -->
+      <Step ID="AGING_INIT" Name="[老化] 初始化" Type="PassFail" Enabled="true" Timeout="5000" OnFail="Abort">
+        <TargetMethod Class="CommonTestMethods" Method="Initialize"/>
+      </Step>
+      
+      <!-- 外层循环：控制测试轮次 -->
+      <Step ID="AGING_LOOP" Name="老化循环" Type="ForLoop" Enabled="true" 
+            LoopStart="1" LoopEnd="10" LoopStep="1" LoopVariable="round" MaxIterations="100">
+        <SubSteps>
+          <!-- 轮次开始日志 -->
+          <Step ID="ROUND_START" Name="[Round${round}] 开始" Type="Action" Enabled="true">
+            <TargetMethod Class="CommonTestMethods" Method="LogMessage"/>
+            <Parameters>
+              <Param Name="message" Type="string" Value="开始第${round}轮老化测试"/>
+            </Parameters>
+          </Step>
+          
+          <!-- 本轮电压测试 -->
+          <Step ID="AGING_VOLTAGE" Name="[Round${round}] 电压测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+            <Limits Lower="2.8" Upper="3.8" Unit="V" Precision="3" CompareMode="GE_LE"/>
+          </Step>
+          
+          <!-- 本轮电流测试 -->
+          <Step ID="AGING_CURRENT" Name="[Round${round}] 电流测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
+            <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE"/>
+          </Step>
+          
+          <!-- 本轮功率测试 -->
+          <Step ID="AGING_POWER" Name="[Round${round}] 功率测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestPower"/>
+            <Limits Lower="0.3" Upper="0.8" Unit="W" Precision="3" CompareMode="GE_LE"/>
+          </Step>
+          
+          <!-- 轮次间延时（老化测试通常需要间隔时间） -->
+          <Step ID="ROUND_DELAY" Name="[Round${round}] 等待下一轮" Type="Action" Enabled="true" Timeout="70000">
+            <TargetMethod Class="CommonTestMethods" Method="Delay"/>
+            <Parameters>
+              <Param Name="milliseconds" Type="int" Value="60000"/>
+            </Parameters>
+          </Step>
+        </SubSteps>
+      </Step>
+      
+      <!-- 老化测试完成 -->
+      <Step ID="AGING_COMPLETE" Name="[老化] 测试完成" Type="PassFail" Enabled="true" Timeout="5000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="Cleanup"/>
+      </Step>
+    </Steps>
+  </Sequence>
+  
+  <!-- 工位分组测试示例 - 适用于多工位配对测试 -->
+  <Sequence ID="SEQ_STATION_GROUP" Name="工位分组测试" Description="演示如何根据工位编号执行不同测试" Enabled="true" Version="1.0">
+    <Variables>
+      <Variable Name="StationIndex" Type="int" DefaultValue="0" Description="当前工位索引（由系统设置）"/>
+    </Variables>
+    
+    <Steps>
+      <!-- 根据工位奇偶性执行不同测试 -->
+      <Step ID="STATION_BRANCH" Name="工位分支判断" Type="ConditionalBranch" Enabled="true">
+        <BranchCondition>${StationIndex} % 2 == 0</BranchCondition>
+        <TrueSteps>
+          <!-- 偶数工位（0, 2, 4...）测试A类产品 -->
+          <Step ID="EVEN_STATION_TEST" Name="[偶数工位] 产品A测试" Type="NumericTest" Enabled="true" Timeout="5000">
+            <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+            <Parameters>
+              <Param Name="channel" Type="int" Value="${StationIndex}"/>
+            </Parameters>
+            <Limits Lower="2.8" Upper="3.8" Unit="V" Precision="3" CompareMode="GE_LE"/>
+          </Step>
+        </TrueSteps>
+        <FalseSteps>
+          <!-- 奇数工位（1, 3, 5...）测试B类产品 -->
+          <Step ID="ODD_STATION_TEST" Name="[奇数工位] 产品B测试" Type="NumericTest" Enabled="true" Timeout="5000">
+            <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
+            <Parameters>
+              <Param Name="channel" Type="int" Value="${StationIndex}"/>
+            </Parameters>
+            <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE"/>
+          </Step>
+        </FalseSteps>
+      </Step>
+    </Steps>
+  </Sequence>
+  
 </TestSequenceConfig>
