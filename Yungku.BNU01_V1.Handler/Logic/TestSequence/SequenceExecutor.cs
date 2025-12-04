@@ -603,10 +603,18 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 WriteLog("INFO", $"While循环未设置最大迭代次数，使用默认值: {DEFAULT_MAX_ITERATIONS}");
             }
 
-            // 计算总超时时间
-            int totalTimeout = step.Timeout > 0 
-                ? Math.Min(step.Timeout * step.MaxIterations, DEFAULT_WHILE_TIMEOUT_MS)
-                : DEFAULT_WHILE_TIMEOUT_MS;
+            // 计算总超时时间（防止整数溢出）
+            int totalTimeout;
+            if (step.Timeout > 0)
+            {
+                // 使用 checked 或 long 防止溢出
+                long calculatedTimeout = (long)step.Timeout * step.MaxIterations;
+                totalTimeout = (int)Math.Min(calculatedTimeout, DEFAULT_WHILE_TIMEOUT_MS);
+            }
+            else
+            {
+                totalTimeout = DEFAULT_WHILE_TIMEOUT_MS;
+            }
 
             WriteLog("INFO", $"开始While循环: {step.WhileCondition} (最大迭代: {step.MaxIterations}, 总超时: {totalTimeout}ms)");
 
@@ -1929,10 +1937,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         /// <param name="maxAge">最大存活时间</param>
         public static void CleanupStaleGlobalVariables(TimeSpan maxAge)
         {
+            var now = DateTime.Now;
             lock (_globalVarLock)
             {
                 var staleKeys = _globalVariables
-                    .Where(kvp => DateTime.Now - kvp.Value.LastAccessTime > maxAge)
+                    .Where(kvp => now - kvp.Value.LastAccessTime > maxAge)
                     .Select(kvp => kvp.Key)
                     .ToList();
 
@@ -1949,10 +1958,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         /// <param name="maxAge">最大存活时间</param>
         public static void CleanupStaleRegisteredSequences(TimeSpan maxAge)
         {
+            var now = DateTime.Now;
             lock (_seqLock)
             {
                 var staleKeys = _registeredSequences
-                    .Where(kvp => DateTime.Now - kvp.Value.ModifiedTime > maxAge)
+                    .Where(kvp => now - kvp.Value.ModifiedTime > maxAge)
                     .Select(kvp => kvp.Key)
                     .ToList();
 

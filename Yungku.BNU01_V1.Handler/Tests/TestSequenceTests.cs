@@ -620,7 +620,9 @@ namespace Yungku.BNU01_V1.Handler.Tests
                     AssertTrue("嵌套表达式计算成功", result != null);
 
                     // 测试过长表达式
-                    string longExpr = new string('1', 1001);
+                    // 使用超过最大长度限制（1000字符）的表达式
+                    const int MAX_EXPRESSION_LENGTH_FOR_TEST = 1000;
+                    string longExpr = new string('1', MAX_EXPRESSION_LENGTH_FOR_TEST + 1);
                     bool threwException = false;
                     try
                     {
@@ -643,6 +645,7 @@ namespace Yungku.BNU01_V1.Handler.Tests
 
         /// <summary>
         /// 测试变量LastAccessTime属性
+        /// 注意：使用小延迟来确保时间戳差异可检测
         /// </summary>
         private void TestVariableLastAccessTime()
         {
@@ -656,7 +659,8 @@ namespace Yungku.BNU01_V1.Handler.Tests
                 DateTime initialTime = variable.LastAccessTime;
                 AssertTrue("初始访问时间已设置", initialTime != DateTime.MinValue);
 
-                // 等待一小段时间
+                // 等待一小段时间以确保时间戳更新可检测
+                // 使用10ms作为最小可检测时间差
                 System.Threading.Thread.Sleep(10);
 
                 // 设置值更新访问时间
