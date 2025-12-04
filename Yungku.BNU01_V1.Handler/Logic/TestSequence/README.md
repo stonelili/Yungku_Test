@@ -196,12 +196,30 @@
 // 当前实现：根据产品索引返回工位索引
 private static int GetStationIndexByProduct(Product product)
 {
-    if (product.Jig != null && product.Jig.Head != null)
+    try
     {
-        int productIndex = product.Jig.Head.ProductIndexOf(product);
-        return productIndex; // 产品索引直接映射到工位索引
+        // 方案1: 根据产品索引判断
+        if (product.Jig != null && product.Jig.Head != null)
+        {
+            int productIndex = product.Jig.Head.ProductIndexOf(product);
+            return productIndex; // 产品索引直接映射到工位索引
+        }
+
+        // 方案2: 根据产品名称判断（备用方案）
+        if (product.Name.Contains("0"))
+        {
+            return 0; // 左工位
+        }
+        else if (product.Name.Contains("1"))
+        {
+            return 1; // 右工位
+        }
     }
-    return 0;
+    catch (Exception ex)
+    {
+        MyApp.GetInstance().Logger.WriteError($"获取工位索引失败: {ex.Message}");
+    }
+    return 0; // 默认返回左工位
 }
 ```
 

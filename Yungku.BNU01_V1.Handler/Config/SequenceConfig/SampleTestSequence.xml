@@ -222,7 +222,7 @@
     <Steps>
       <!-- 使用循环测试多个产品 -->
       <Step ID="MULTI_VOLTAGE_LOOP" Name="多产品电压测试" Type="ForLoop" Enabled="true" 
-            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="10">
+            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="4">
         <SubSteps>
           <!-- 测试名称包含产品索引，便于UI区分 -->
           <Step ID="MULTI_VOLTAGE_TEST" Name="[P${productIdx}] 电压测试" Type="NumericTest" Enabled="true" Timeout="3000" OnFail="Continue">
@@ -237,7 +237,7 @@
       
       <!-- 多产品电流测试 -->
       <Step ID="MULTI_CURRENT_LOOP" Name="多产品电流测试" Type="ForLoop" Enabled="true" 
-            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="10">
+            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="4">
         <SubSteps>
           <Step ID="MULTI_CURRENT_TEST" Name="[P${productIdx}] 电流测试" Type="NumericTest" Enabled="true" Timeout="3000" OnFail="Continue">
             <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
