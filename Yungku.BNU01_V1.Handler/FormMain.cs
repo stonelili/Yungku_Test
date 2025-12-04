@@ -828,7 +828,11 @@ namespace Yungku.BNU01_V1.Handler
                     }
                     MyApp.NeedReset = false;
                 }
-                catch { }
+                catch (Exception restoreEx)
+                {
+                    // 恢复标志状态失败时记录日志
+                    MyApp.GetInstance()?.Logger?.WriteError($"恢复标志状态失败: {restoreEx.Message}");
+                }
             }
             catch (Exception ex)
             {
@@ -851,7 +855,11 @@ namespace Yungku.BNU01_V1.Handler
                     }
                     MyApp.NeedReset = false;
                 }
-                catch { }
+                catch (Exception restoreEx)
+                {
+                    // 恢复标志状态失败时记录日志
+                    MyApp.GetInstance()?.Logger?.WriteError($"恢复标志状态失败: {restoreEx.Message}");
+                }
             }
         }
         
@@ -965,9 +973,10 @@ namespace Yungku.BNU01_V1.Handler
                     }
                     System.Threading.Thread.Sleep(2000);
                 }
-                catch
+                catch (Exception closeEx)
                 {
-
+                    // 窗口关闭时的异常不影响关闭流程，但记录日志
+                    MyApp.GetInstance()?.Logger?.WriteError($"窗口关闭时发生异常: {closeEx.Message}");
                 }
             }
             else

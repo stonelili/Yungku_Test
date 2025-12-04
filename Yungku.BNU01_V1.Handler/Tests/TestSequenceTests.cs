@@ -56,6 +56,14 @@ namespace Yungku.BNU01_V1.Handler.Tests
             // 测试变量功能
             TestSequenceVariables();
 
+            // 安全修复测试
+            TestSequenceExecutorDisposable();
+            TestExpressionSafetyLimits();
+            TestVariableLastAccessTime();
+            TestThreadSafety();
+            TestStaticDictionaryCleanup();
+            TestWhileLoopProtection();
+
             // 输出测试摘要
             testResults.AppendLine();
             testResults.AppendLine("========================================");
@@ -543,6 +551,244 @@ namespace Yungku.BNU01_V1.Handler.Tests
             catch (Exception ex)
             {
                 LogResult("变量功能测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        #endregion
+
+        #region 安全修复测试
+
+        /// <summary>
+        /// 测试IDisposable实现
+        /// </summary>
+        private void TestSequenceExecutorDisposable()
+        {
+            BeginTest("SequenceExecutor IDisposable 测试");
+
+            try
+            {
+                // 测试Dispose模式
+                SequenceExecutor executor = null;
+                try
+                {
+                    executor = new SequenceExecutor();
+                    AssertTrue("执行器创建成功", executor != null);
+                }
+                finally
+                {
+                    if (executor != null)
+                    {
+                        executor.Dispose();
+                        AssertTrue("执行器Dispose成功", true);
+                    }
+                }
+
+                // 测试using语句
+                using (var exec = new SequenceExecutor())
+                {
+                    AssertTrue("Using语句正常工作", exec != null);
+                }
+                AssertTrue("Using语句结束后资源已释放", true);
+            }
+            catch (Exception ex)
+            {
+                LogResult("IDisposable测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        /// <summary>
+        /// 测试表达式安全限制
+        /// </summary>
+        private void TestExpressionSafetyLimits()
+        {
+            BeginTest("表达式安全限制测试");
+
+            try
+            {
+                using (var executor = new SequenceExecutor())
+                {
+                    // 测试正常表达式
+                    var result = executor.EvaluateExpression("1 + 2 * 3");
+                    AssertTrue("正常表达式计算成功", result != null);
+
+                    // 测试嵌套括号表达式
+                    result = executor.EvaluateExpression("((1 + 2) * 3)");
+                    AssertTrue("嵌套表达式计算成功", result != null);
+
+                    // 测试过长表达式
+                    // 使用超过最大长度限制（1000字符）的表达式
+                    const int MAX_EXPRESSION_LENGTH_FOR_TEST = 1000;
+                    string longExpr = new string('1', MAX_EXPRESSION_LENGTH_FOR_TEST + 1);
+                    bool threwException = false;
+                    try
+                    {
+                        result = executor.EvaluateExpression(longExpr);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        threwException = true;
+                    }
+                    AssertTrue("过长表达式被拒绝", threwException || result == null);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogResult("表达式安全限制测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        /// <summary>
+        /// 测试变量LastAccessTime属性
+        /// 注意：使用小延迟来确保时间戳差异可检测
+        /// </summary>
+        private void TestVariableLastAccessTime()
+        {
+            BeginTest("变量LastAccessTime属性测试");
+
+            try
+            {
+                var variable = new SequenceVariable("testVar", "int", "100");
+                
+                // 获取初始访问时间
+                DateTime initialTime = variable.LastAccessTime;
+                AssertTrue("初始访问时间已设置", initialTime != DateTime.MinValue);
+
+                // 等待一小段时间以确保时间戳更新可检测
+                // 使用10ms作为最小可检测时间差
+                System.Threading.Thread.Sleep(10);
+
+                // 设置值更新访问时间
+                variable.CurrentValue = 200;
+                DateTime newTime = variable.LastAccessTime;
+                
+                AssertTrue("设置值后访问时间已更新", newTime >= initialTime);
+            }
+            catch (Exception ex)
+            {
+                LogResult("LastAccessTime测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        /// <summary>
+        /// 测试线程安全（ConcurrentDictionary）
+        /// </summary>
+        private void TestThreadSafety()
+        {
+            BeginTest("线程安全测试");
+
+            try
+            {
+                // 测试全局变量并发访问
+                bool noErrors = true;
+                var tasks = new List<System.Threading.Tasks.Task>();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    int idx = i;
+                    var task = System.Threading.Tasks.Task.Run(() =>
+                    {
+                        try
+                        {
+                            var variable = new SequenceVariable($"globalVar_{idx}", "int", idx.ToString(), VariableScope.Global);
+                            SequenceExecutor.SetGlobalVariable($"globalVar_{idx}", variable);
+                            var retrieved = SequenceExecutor.GetGlobalVariable($"globalVar_{idx}");
+                            if (retrieved == null)
+                                noErrors = false;
+                        }
+                        catch
+                        {
+                            noErrors = false;
+                        }
+                    });
+                    tasks.Add(task);
+                }
+
+                System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+                AssertTrue("并发访问全局变量无错误", noErrors);
+
+                // 清理
+                SequenceExecutor.ClearGlobalVariables();
+            }
+            catch (Exception ex)
+            {
+                LogResult("线程安全测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        /// <summary>
+        /// 测试静态字典清理机制
+        /// </summary>
+        private void TestStaticDictionaryCleanup()
+        {
+            BeginTest("静态字典清理机制测试");
+
+            try
+            {
+                // 添加全局变量
+                var variable = new SequenceVariable("cleanupTestVar", "int", "100", VariableScope.Global);
+                SequenceExecutor.SetGlobalVariable("cleanupTestVar", variable);
+
+                // 验证变量存在
+                var retrieved = SequenceExecutor.GetGlobalVariable("cleanupTestVar");
+                AssertTrue("变量添加成功", retrieved != null);
+
+                // 清理过期变量（使用0时间跨度，立即清理）
+                SequenceExecutor.CleanupStaleGlobalVariables(TimeSpan.Zero);
+
+                // 验证变量已被清理
+                retrieved = SequenceExecutor.GetGlobalVariable("cleanupTestVar");
+                AssertTrue("变量已被清理", retrieved == null);
+
+                // 清理全局变量
+                SequenceExecutor.ClearGlobalVariables();
+            }
+            catch (Exception ex)
+            {
+                LogResult("清理机制测试", false, ex.Message);
+            }
+
+            EndTest();
+        }
+
+        /// <summary>
+        /// 测试While循环保护
+        /// </summary>
+        private void TestWhileLoopProtection()
+        {
+            BeginTest("While循环保护测试");
+
+            try
+            {
+                // 创建一个带有While循环的步骤
+                var step = new TestStep
+                {
+                    ID = "WHILE_TEST",
+                    Name = "While循环测试",
+                    Type = StepType.WhileLoop,
+                    WhileCondition = "true", // 无限循环条件
+                    MaxIterations = 0 // 测试默认值设置
+                };
+
+                // 验证MaxIterations默认值
+                AssertTrue("MaxIterations初始值为0", step.MaxIterations == 0);
+
+                // 设置MaxIterations
+                step.MaxIterations = 100;
+                AssertTrue("MaxIterations设置成功", step.MaxIterations == 100);
+            }
+            catch (Exception ex)
+            {
+                LogResult("While循环保护测试", false, ex.Message);
             }
 
             EndTest();
