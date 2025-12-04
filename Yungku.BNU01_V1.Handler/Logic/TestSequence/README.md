@@ -198,7 +198,7 @@ private static int GetStationIndexByProduct(Product product)
 {
     try
     {
-        // 方案1: 根据产品索引判断
+        // 方案1: 根据产品索引判断（推荐）
         if (product.Jig != null && product.Jig.Head != null)
         {
             int productIndex = product.Jig.Head.ProductIndexOf(product);
@@ -206,6 +206,8 @@ private static int GetStationIndexByProduct(Product product)
         }
 
         // 方案2: 根据产品名称判断（备用方案）
+        // 注意：简单的substring匹配可能产生误判，建议使用更精确的模式匹配
+        // 例如：使用正则表达式或更严格的命名规范（如 "Product0", "Product1"）
         if (product.Name.Contains("0"))
         {
             return 0; // 左工位
@@ -222,6 +224,8 @@ private static int GetStationIndexByProduct(Product product)
     return 0; // 默认返回左工位
 }
 ```
+
+> ⚠️ **注意**：方案2中使用 `Contains()` 进行简单字符串匹配可能产生误判（如产品名"Product10"会同时匹配"0"和"1"）。建议使用更精确的匹配方式，如正则表达式 `Regex.Match(product.Name, @"Product(\d+)$")` 或严格的产品命名规范。
 
 对于超过2个产品的情况，可扩展为动态创建多个显示区域或使用其他区分方式。
 

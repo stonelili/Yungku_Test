@@ -277,12 +277,12 @@
       
       <Step ID="TYPE_A_VOLTAGE" Name="[TypeA] 电压测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
-        <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="3"/>
+        <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="3" CompareMode="GE_LE"/>
       </Step>
       
       <Step ID="TYPE_A_FOCAL" Name="[TypeA] 焦距测试" Type="NumericTest" Enabled="true" Timeout="8000" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestFocalLength"/>
-        <Limits Lower="3.5" Upper="4.0" Unit="mm" Precision="3"/>
+        <Limits Lower="3.5" Upper="4.0" Unit="mm" Precision="3" CompareMode="GE_LE"/>
       </Step>
     </Steps>
   </Sequence>
@@ -295,12 +295,12 @@
       
       <Step ID="TYPE_B_CURRENT" Name="[TypeB] 电流测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
-        <Limits Lower="18" Upper="22" Unit="mA" Precision="2"/>
+        <Limits Lower="18" Upper="22" Unit="mA" Precision="2" CompareMode="GE_LE"/>
       </Step>
       
       <Step ID="TYPE_B_CCT" Name="[TypeB] 色温测试" Type="NumericTest" Enabled="true" Timeout="8000" OnFail="Continue">
         <TargetMethod Class="CommonTestMethods" Method="TestColorTemperature"/>
-        <Limits Lower="4000" Upper="5000" Unit="K" Precision="0"/>
+        <Limits Lower="4000" Upper="5000" Unit="K" Precision="0" CompareMode="GE_LE"/>
       </Step>
     </Steps>
   </Sequence>
