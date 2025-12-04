@@ -306,12 +306,11 @@
   </Sequence>
   
   <!-- 老化测试序列示例 - 支持多轮循环测试 -->
+  <!-- 注意：ForLoop的LoopEnd使用硬编码值。如需动态配置轮次，可在代码中加载后修改 -->
   <Sequence ID="SEQ_AGING" Name="老化测试序列" Description="支持多轮循环的老化/烧机测试" Enabled="true" Version="1.0">
     <Variables>
-      <Variable Name="TestRound" Type="int" DefaultValue="0" Description="当前测试轮次"/>
-      <Variable Name="MaxRounds" Type="int" DefaultValue="10" Description="最大测试轮次（可配置）"/>
-      <Variable Name="RoundPassCount" Type="int" DefaultValue="0" Description="每轮通过计数"/>
-      <Variable Name="RoundFailCount" Type="int" DefaultValue="0" Description="每轮失败计数"/>
+      <Variable Name="RoundPassCount" Type="int" DefaultValue="0" Description="通过计数"/>
+      <Variable Name="RoundFailCount" Type="int" DefaultValue="0" Description="失败计数"/>
     </Variables>
     
     <Steps>
@@ -320,7 +319,7 @@
         <TargetMethod Class="CommonTestMethods" Method="Initialize"/>
       </Step>
       
-      <!-- 外层循环：控制测试轮次 -->
+      <!-- 外层循环：控制测试轮次（LoopEnd=10表示执行10轮，可根据需要修改） -->
       <Step ID="AGING_LOOP" Name="老化循环" Type="ForLoop" Enabled="true" 
             LoopStart="1" LoopEnd="10" LoopStep="1" LoopVariable="round" MaxIterations="100">
         <SubSteps>

@@ -376,15 +376,10 @@ Turntable0
      </Variables>
      
      <Steps>
-       <!-- 外层循环：控制测试轮次 -->
-       <Step ID="AGING_LOOP" Name="老化循环" Type="WhileLoop" 
-             WhileCondition="${TestRound} &lt; ${MaxRounds}" MaxIterations="1000">
+       <!-- 外层循环：控制测试轮次（使用ForLoop实现固定轮次） -->
+       <Step ID="AGING_LOOP" Name="老化循环" Type="ForLoop" 
+             LoopStart="1" LoopEnd="100" LoopStep="1" LoopVariable="TestRound" MaxIterations="1000">
          <SubSteps>
-           <!-- 更新轮次计数 -->
-           <Step ID="UPDATE_ROUND" Name="更新轮次" Type="Action">
-             <Expression>${TestRound} = ${TestRound} + 1</Expression>
-           </Step>
-           
            <!-- 记录当前轮次 -->
            <Step ID="LOG_ROUND" Name="[Round${TestRound}] 轮次开始" Type="Action">
              <TargetMethod Class="CommonTestMethods" Method="LogMessage"/>
@@ -411,6 +406,8 @@ Turntable0
      </Steps>
    </Sequence>
    ```
+
+   > **注意**：ForLoop 的 `LoopEnd` 属性目前使用硬编码值。如需动态配置轮次，可在代码中加载序列后修改此值，或使用 WhileLoop 配合条件表达式实现。
 
 3. **老化测试界面显示**：
    - 每轮测试结果会带有 `[RoundN]` 前缀
