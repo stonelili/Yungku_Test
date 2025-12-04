@@ -329,11 +329,27 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         [XmlAttribute]
         public int ArraySize { get; set; } = 0;
 
+        private object _currentValue;
+
         /// <summary>
         /// 当前值（运行时）
         /// </summary>
         [XmlIgnore]
-        public object CurrentValue { get; set; }
+        public object CurrentValue 
+        { 
+            get { return _currentValue; }
+            set 
+            { 
+                _currentValue = value;
+                LastAccessTime = DateTime.Now;
+            }
+        }
+
+        /// <summary>
+        /// 最后访问时间（用于清理过期变量）
+        /// </summary>
+        [XmlIgnore]
+        public DateTime LastAccessTime { get; set; } = DateTime.Now;
 
         /// <summary>
         /// 是否为数组类型

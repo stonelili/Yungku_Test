@@ -352,7 +352,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                     TestDisplayHelper.UpdateRightStation("测试状态", "准备发送命令...");
                 }
             }
-            catch { }
+            catch (Exception displayEx)
+            {
+                // 更新显示失败时记录日志，但不影响主流程
+                MyApp.GetInstance()?.Logger?.WriteError($"更新测试显示失败: {displayEx.Message}");
+            }
 
             //遍历测试头中的站位对象
             foreach (Jig jig in hd.TestItems)
@@ -379,7 +383,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                                     TestDisplayHelper.UpdateRightStation(product.Name, "测试中...");
                                 }
                             }
-                            catch { }
+                            catch (Exception displayEx)
+                            {
+                                // 更新显示失败时记录日志，但不影响主流程
+                                MyApp.GetInstance()?.Logger?.WriteError($"更新产品显示失败: {displayEx.Message}");
+                            }
 
                             foreach (Module module in product.TestItems)
                             {
@@ -410,7 +418,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                                                 TestDisplayHelper.UpdateRightStation(product.Name, "ERROR");
                                             }
                                         }
-                                        catch { }
+                                        catch (Exception displayEx)
+                                        {
+                                            // 更新显示失败时记录日志，但不影响主流程
+                                            MyApp.GetInstance()?.Logger?.WriteError($"更新错误显示失败: {displayEx.Message}");
+                                        }
                                     }
                                 }
                             }
@@ -431,7 +443,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                     TestDisplayHelper.UpdateRightStation("测试状态", "等待测试结果...");
                 }
             }
-            catch { }
+            catch (Exception displayEx)
+            {
+                // 更新显示失败时记录日志，但不影响主流程
+                MyApp.GetInstance()?.Logger?.WriteError($"更新等待状态显示失败: {displayEx.Message}");
+            }
         }
 
         /// <summary>
@@ -533,7 +549,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                                 TestDisplayHelper.UpdateRightStation(product.Name, result);
                             }
                         }
-                        catch { }
+                        catch (Exception displayEx)
+                        {
+                            // 更新显示失败时记录日志，但不影响主流程
+                            MyApp.GetInstance()?.Logger?.WriteError($"更新测试结果显示失败: {displayEx.Message}");
+                        }
 
                         string PrintID = string.Format("{0}_{1}", product.Name, doneCmd.Id);
                         if (listPrintCmds.Contains(PrintID) == false)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -55,8 +56,32 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
     /// 序列执行引擎
     /// 负责执行测试序列，使用反射调用配置的测试方法
     /// </summary>
-    public class SequenceExecutor
+    public class SequenceExecutor : IDisposable
     {
+        #region 常量
+
+        /// <summary>
+        /// 表达式最大长度限制
+        /// </summary>
+        private const int MAX_EXPRESSION_LENGTH = 1000;
+
+        /// <summary>
+        /// 表达式最大递归深度限制
+        /// </summary>
+        private const int MAX_RECURSION_DEPTH = 50;
+
+        /// <summary>
+        /// While循环默认最大迭代次数
+        /// </summary>
+        private const int DEFAULT_MAX_ITERATIONS = 10000;
+
+        /// <summary>
+        /// While循环默认总超时时间（毫秒）
+        /// </summary>
+        private const int DEFAULT_WHILE_TIMEOUT_MS = 300000; // 5分钟
+
+        #endregion
+
         #region 字段
 
         private readonly TestMethodRegistry _registry;
@@ -65,17 +90,18 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         private bool _isPaused;
         private readonly object _pauseLock = new object();
         private ManualResetEventSlim _pauseEvent = new ManualResetEventSlim(true);
+        private bool _disposed = false;
 
         /// <summary>
-        /// 全局变量存储 - 跨序列共享
+        /// 全局变量存储 - 跨序列共享，使用ConcurrentDictionary保证线程安全
         /// </summary>
-        private static readonly Dictionary<string, SequenceVariable> _globalVariables = new Dictionary<string, SequenceVariable>();
+        private static readonly ConcurrentDictionary<string, SequenceVariable> _globalVariables = new ConcurrentDictionary<string, SequenceVariable>();
         private static readonly object _globalVarLock = new object();
 
         /// <summary>
-        /// 局部变量存储 - 当前步骤级别
+        /// 局部变量存储 - 当前步骤级别，使用ConcurrentDictionary保证线程安全
         /// </summary>
-        private readonly Dictionary<string, SequenceVariable> _localVariables = new Dictionary<string, SequenceVariable>();
+        private readonly ConcurrentDictionary<string, SequenceVariable> _localVariables = new ConcurrentDictionary<string, SequenceVariable>();
 
         #endregion
 
@@ -570,16 +596,37 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 return;
             }
 
-            WriteLog("INFO", $"开始While循环: {step.WhileCondition}");
+            // 设置默认最大迭代次数（防止死循环）
+            if (step.MaxIterations <= 0)
+            {
+                step.MaxIterations = DEFAULT_MAX_ITERATIONS;
+                WriteLog("INFO", $"While循环未设置最大迭代次数，使用默认值: {DEFAULT_MAX_ITERATIONS}");
+            }
+
+            // 计算总超时时间
+            int totalTimeout = step.Timeout > 0 
+                ? Math.Min(step.Timeout * step.MaxIterations, DEFAULT_WHILE_TIMEOUT_MS)
+                : DEFAULT_WHILE_TIMEOUT_MS;
+
+            WriteLog("INFO", $"开始While循环: {step.WhileCondition} (最大迭代: {step.MaxIterations}, 总超时: {totalTimeout}ms)");
 
             bool loopSuccess = true;
             int iterationCount = 0;
+            var loopStartTime = DateTime.Now;
 
             while (EvaluateCondition(step.WhileCondition))
             {
+                // 检查最大迭代次数
                 if (iterationCount >= step.MaxIterations)
                 {
                     WriteLog("WARN", $"达到最大迭代次数: {step.MaxIterations}");
+                    break;
+                }
+
+                // 检查总超时时间
+                if ((DateTime.Now - loopStartTime).TotalMilliseconds >= totalTimeout)
+                {
+                    WriteLog("WARN", $"While循环总超时: {totalTimeout}ms");
                     break;
                 }
 
@@ -1642,13 +1689,19 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             if (string.IsNullOrEmpty(expression))
                 return null;
 
+            // 表达式长度限制
+            if (expression.Length > MAX_EXPRESSION_LENGTH)
+            {
+                throw new InvalidOperationException($"表达式长度超过限制 ({MAX_EXPRESSION_LENGTH} 字符)");
+            }
+
             try
             {
                 // 首先解析变量引用
                 string resolvedExpr = ResolveAllVariableReferences(expression);
 
                 // 简单的数学表达式计算
-                return EvaluateMathExpression(resolvedExpr);
+                return EvaluateMathExpression(resolvedExpr, 0);
             }
             catch (Exception ex)
             {
@@ -1660,8 +1713,22 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         /// <summary>
         /// 计算数学表达式（简单实现）
         /// </summary>
-        private double EvaluateMathExpression(string expression)
+        /// <param name="expression">表达式</param>
+        /// <param name="depth">当前递归深度</param>
+        private double EvaluateMathExpression(string expression, int depth = 0)
         {
+            // 递归深度限制
+            if (depth > MAX_RECURSION_DEPTH)
+            {
+                throw new InvalidOperationException($"表达式嵌套层数超过限制 ({MAX_RECURSION_DEPTH})");
+            }
+
+            // 表达式长度限制
+            if (expression.Length > MAX_EXPRESSION_LENGTH)
+            {
+                throw new InvalidOperationException($"表达式长度超过限制 ({MAX_EXPRESSION_LENGTH} 字符)");
+            }
+
             expression = expression.Trim();
 
             // 处理括号
@@ -1673,7 +1740,7 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                     throw new ArgumentException("括号不匹配");
 
                 string innerExpr = expression.Substring(openParen + 1, closeParen - openParen - 1);
-                double innerResult = EvaluateMathExpression(innerExpr);
+                double innerResult = EvaluateMathExpression(innerExpr, depth + 1);
                 expression = expression.Substring(0, openParen) + innerResult.ToString() + expression.Substring(closeParen + 1);
             }
 
@@ -1688,8 +1755,8 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                     {
                         string left = expression.Substring(0, i);
                         string right = expression.Substring(i + 1);
-                        double leftVal = EvaluateMathExpression(left);
-                        double rightVal = EvaluateMathExpression(right);
+                        double leftVal = EvaluateMathExpression(left, depth + 1);
+                        double rightVal = EvaluateMathExpression(right, depth + 1);
                         return expression[i] == '+' ? leftVal + rightVal : leftVal - rightVal;
                     }
                 }
@@ -1702,8 +1769,8 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
                 {
                     string left = expression.Substring(0, i);
                     string right = expression.Substring(i + 1);
-                    double leftVal = EvaluateMathExpression(left);
-                    double rightVal = EvaluateMathExpression(right);
+                    double leftVal = EvaluateMathExpression(left, depth + 1);
+                    double rightVal = EvaluateMathExpression(right, depth + 1);
                     switch (expression[i])
                     {
                         case '*': return leftVal * rightVal;
@@ -1719,7 +1786,7 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
             {
                 string left = expression.Substring(0, powerIndex);
                 string right = expression.Substring(powerIndex + 1);
-                return Math.Pow(EvaluateMathExpression(left), EvaluateMathExpression(right));
+                return Math.Pow(EvaluateMathExpression(left, depth + 1), EvaluateMathExpression(right, depth + 1));
             }
 
             // 返回数值
@@ -1854,6 +1921,78 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence
         public object GetContextVariable(string name)
         {
             return Context.TryGetValue(name, out var value) ? value : null;
+        }
+
+        /// <summary>
+        /// 清理过期的全局变量
+        /// </summary>
+        /// <param name="maxAge">最大存活时间</param>
+        public static void CleanupStaleGlobalVariables(TimeSpan maxAge)
+        {
+            lock (_globalVarLock)
+            {
+                var staleKeys = _globalVariables
+                    .Where(kvp => DateTime.Now - kvp.Value.LastAccessTime > maxAge)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var key in staleKeys)
+                {
+                    _globalVariables.TryRemove(key, out _);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 清理过期的已注册序列
+        /// </summary>
+        /// <param name="maxAge">最大存活时间</param>
+        public static void CleanupStaleRegisteredSequences(TimeSpan maxAge)
+        {
+            lock (_seqLock)
+            {
+                var staleKeys = _registeredSequences
+                    .Where(kvp => DateTime.Now - kvp.Value.ModifiedTime > maxAge)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var key in staleKeys)
+                {
+                    _registeredSequences.Remove(key);
+                }
+            }
+        }
+
+        #endregion
+
+        #region IDisposable 实现
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        /// <param name="disposing">是否释放托管资源</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // 释放托管资源
+                    _pauseEvent?.Dispose();
+                    _cancellationTokenSource?.Dispose();
+                    _localVariables.Clear();
+                }
+                _disposed = true;
+            }
         }
 
         #endregion

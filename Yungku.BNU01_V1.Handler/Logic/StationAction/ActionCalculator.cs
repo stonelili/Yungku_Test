@@ -557,7 +557,11 @@ namespace Yungku.BNU01_V1.Handler.Logic.StationAction
                         TestDisplayHelper.UpdateRightStation(Name, $"ERROR - {ex.Message}");
                     }
                 }
-                catch { }
+                catch (Exception displayEx)
+                {
+                    // 更新显示失败时记录日志，但不影响主流程
+                    MyApp.GetInstance()?.Logger?.WriteError($"更新测试显示失败: {displayEx.Message}");
+                }
                 SetProductsResult(TestResult.Error);
                 To(ACT_STATE_END);
             }
