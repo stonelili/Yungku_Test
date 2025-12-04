@@ -259,6 +259,17 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
                 report.AddWarning($"{stepPrefix}: 超时时间过长 ({step.Timeout}ms)，可能影响测试效率");
             }
 
+            // 定义不需要验证目标方法的控制流步骤类型
+            var controlFlowTypes = new HashSet<StepType>
+            {
+                StepType.ForLoop,
+                StepType.WhileLoop,
+                StepType.ForEachLoop,
+                StepType.ConditionalBranch,
+                StepType.SequenceGroup,
+                StepType.SubSequenceCall
+            };
+
             // 根据步骤类型验证
             switch (step.Type)
             {
@@ -268,6 +279,26 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
 
                 case StepType.StringTest:
                     ValidateStringTestStep(step, report, stepPrefix);
+                    break;
+
+                case StepType.PassFail:
+                    // PassFail类型不需要特殊验证，只需要目标方法返回bool
+                    break;
+
+                case StepType.Action:
+                    // Action类型不需要特殊验证
+                    break;
+
+                case StepType.MultiNumericTest:
+                    ValidateMultiNumericTestStep(step, report, stepPrefix);
+                    break;
+
+                case StepType.CallbackAction:
+                    // CallbackAction类型需要回调处理，暂时不做额外验证
+                    break;
+
+                case StepType.SequenceGroup:
+                    ValidateSequenceGroupStep(step, report, stepPrefix);
                     break;
 
                 case StepType.ForLoop:
@@ -289,12 +320,14 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
                 case StepType.SubSequenceCall:
                     ValidateSubSequenceCallStep(step, report, stepPrefix);
                     break;
+
+                default:
+                    report.AddWarning($"{stepPrefix}: 未知的步骤类型 '{step.Type}'");
+                    break;
             }
 
             // 验证目标方法（对于非控制流步骤）
-            if (step.Type != StepType.ForLoop && step.Type != StepType.WhileLoop &&
-                step.Type != StepType.ForEachLoop && step.Type != StepType.ConditionalBranch &&
-                step.Type != StepType.SequenceGroup && step.Type != StepType.SubSequenceCall)
+            if (!controlFlowTypes.Contains(step.Type))
             {
                 ValidateTargetMethod(step, report, stepPrefix);
             }
@@ -363,6 +396,29 @@ namespace Yungku.BNU01_V1.Handler.Logic.TestSequence.Config
             if (!string.IsNullOrEmpty(step.ExpectedString))
             {
                 report.AddSuggestion($"{stepPrefix}: 已设置期望字符串，将进行精确匹配");
+            }
+        }
+
+        /// <summary>
+        /// 验证多值测试步骤
+        /// </summary>
+        private void ValidateMultiNumericTestStep(TestStep step, ConfigValidationReport report, string stepPrefix)
+        {
+            // 多值测试应该有限值列表或单个限值
+            if (step.Limits == null)
+            {
+                report.AddWarning($"{stepPrefix}: 多值测试未设置限值");
+            }
+        }
+
+        /// <summary>
+        /// 验证序列组步骤
+        /// </summary>
+        private void ValidateSequenceGroupStep(TestStep step, ConfigValidationReport report, string stepPrefix)
+        {
+            if (step.SubSteps == null || step.SubSteps.Count == 0)
+            {
+                report.AddWarning($"{stepPrefix}: 序列组没有子步骤");
             }
         }
 
