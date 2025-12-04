@@ -64,6 +64,24 @@ namespace Yungku.BNU01_V1.Handler
                 case "Turntable0_Station7_ConfigFile":
                     return currentProjectPath+@"Script\Turntable0_Station7_ConfigFile.xml";
 
+                // 测试序列配置文件
+                case "Turntable0_Station0_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station0_Sequence.xml";
+                case "Turntable0_Station1_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station1_Sequence.xml";
+                case "Turntable0_Station2_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station2_Sequence.xml";
+                case "Turntable0_Station3_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station3_Sequence.xml";
+                case "Turntable0_Station4_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station4_Sequence.xml";
+                case "Turntable0_Station5_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station5_Sequence.xml";
+                case "Turntable0_Station6_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station6_Sequence.xml";
+                case "Turntable0_Station7_SequenceFile":
+                    return currentProjectPath + @"Script\Turntable0_Station7_Sequence.xml";
+
                 case MyApp.KEY_CONFIG_FILE:
                     return currentProjectPath+"AppConfig.xml";
                 case MyApp.UPCAM_CONFIG_FILE:

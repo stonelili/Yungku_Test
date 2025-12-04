@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestSequenceConfig Version="1.0" Name="左工位测试序列配置" CreatedTime="2024-01-01T00:00:00">
+  <Sequence ID="SEQ_LEFT_STATION" Name="左工位测试序列" Description="左工位的完整测试流程" Enabled="true" Version="1.0" Author="System" CreatedTime="2024-01-01T00:00:00" ModifiedTime="2024-01-01T00:00:00">
+    <PreCondition>HasProduct</PreCondition>
+    
+    <!-- 
+      =========================================
+      序列变量定义 - 类似TestStand的变量功能
+      =========================================
+      
+      变量作用域（Scope）：
+      - Local: 局部变量，仅在当前步骤中有效
+      - Sequence: 序列变量（默认），在当前序列中有效
+      - Global: 全局变量，跨序列共享
+      
+      数组类型：使用 类型[] 格式，如 int[], double[], string[]
+      数组默认值：使用逗号分隔，如 "1,2,3,4,5"
+      
+      表达式计算：支持 ${A + B}, ${A * 2} 等数学运算
+    -->
+    
+    <!-- 导入外部变量定义文件 -->
+    <Imports>
+      <!-- <Import File="CommonVariables.xml" Type="Variables" /> -->
+      <!-- <Import File="SharedSequences.xml" Type="Sequences" Prefix="Shared_" /> -->
+    </Imports>
+    
+    <Variables>
+      <!-- 序列级变量 -->
+      <Variable Name="ProductIndex" Type="int" DefaultValue="0" Description="当前产品索引" Scope="Sequence" />
+      <Variable Name="TestChannel" Type="int" DefaultValue="0" Description="测试通道" Scope="Sequence" />
+      <Variable Name="FocalLengthResult" Type="double" DefaultValue="0" Description="焦距测试结果" Scope="Sequence" />
+      <Variable Name="BarcodeResult" Type="string" DefaultValue="" Description="二维码读取结果" Scope="Sequence" />
+      <Variable Name="LoopCount" Type="int" DefaultValue="3" Description="循环测试次数" Scope="Sequence" />
+      <Variable Name="TestEnabled" Type="bool" DefaultValue="true" Description="测试是否启用" Scope="Sequence" />
+      
+      <!-- 全局变量 - 跨序列共享 -->
+      <Variable Name="TotalTestCount" Type="int" DefaultValue="0" Description="总测试次数（全局）" Scope="Global" />
+      <Variable Name="TotalPassCount" Type="int" DefaultValue="0" Description="总通过次数（全局）" Scope="Global" />
+      
+      <!-- 数组类型变量示例 -->
+      <Variable Name="TestResults" Type="double[]" DefaultValue="0,0,0,0,0" Description="测试结果数组" Scope="Sequence" ArraySize="5" />
+      <Variable Name="ChannelList" Type="int[]" DefaultValue="0,1,2,3" Description="通道列表" Scope="Sequence" ArraySize="4" />
+    </Variables>
+    
+    <Steps>
+      <Step ID="1" Name="初始化测试" Description="初始化测试环境" Type="Action" Enabled="true" Timeout="5000" RetryCount="0" OnFail="Abort">
+        <TargetMethod Class="CommonTestMethods" Method="Initialize" />
+        <Parameters>
+          <Param Name="timeout" Type="int" Value="5000" />
+        </Parameters>
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：条件分支 (If/Else)
+        =========================================
+        根据 TestEnabled 变量决定是否执行测试
+      -->
+      <Step ID="2" Name="条件测试分支" Description="根据条件执行不同的测试" Type="ConditionalBranch" Enabled="true">
+        <BranchCondition>${TestEnabled} == true</BranchCondition>
+        <TrueSteps>
+          <Step ID="2.1" Name="焦距测试" Type="NumericTest" Enabled="true" Timeout="10000" OnFail="Continue" ResultVariable="FocalLengthResult">
+            <TargetMethod Class="CommonTestMethods" Method="TestFocalLength" />
+            <Parameters>
+              <Param Name="productIndex" Type="int" Value="${ProductIndex}" />
+            </Parameters>
+            <Limits Lower="3.8" Upper="4.2" Unit="mm" Precision="3" CompareMode="GE_LE" />
+          </Step>
+          <Step ID="2.2" Name="色温测试" Type="NumericTest" Enabled="true" Timeout="10000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestColorTemperature" />
+            <Limits Lower="2700" Upper="6500" Unit="K" Precision="0" CompareMode="GE_LE" />
+          </Step>
+        </TrueSteps>
+        <FalseSteps>
+          <Step ID="2.3" Name="跳过测试记录" Type="Action" Enabled="true">
+            <TargetMethod Class="CommonTestMethods" Method="LogMessage" />
+            <Parameters>
+              <Param Name="message" Type="string" Value="测试已跳过" />
+            </Parameters>
+          </Step>
+        </FalseSteps>
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：For循环
+        =========================================
+        循环测试多个通道
+      -->
+      <Step ID="3" Name="多通道电流测试循环" Description="循环测试所有通道的电流" Type="ForLoop" Enabled="true"
+            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="ch" MaxIterations="100">
+        <SubSteps>
+          <Step ID="3.1" Name="通道电流测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+            <!-- 使用循环变量 ${ch} 作为通道参数 -->
+            <Precondition>${ch} >= 0</Precondition>
+            <TargetMethod Class="CommonTestMethods" Method="TestCurrent" />
+            <Parameters>
+              <Param Name="channel" Type="int" Value="${ch}" />
+            </Parameters>
+            <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE" />
+          </Step>
+        </SubSteps>
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：ForEach循环
+        =========================================
+        遍历数组进行测试
+      -->
+      <Step ID="4" Name="遍历通道列表测试" Description="遍历ChannelList数组进行电压测试" Type="ForEachLoop" Enabled="true"
+            ArrayVariable="ChannelList" ElementVariable="channel" LoopVariable="idx" MaxIterations="100">
+        <SubSteps>
+          <Step ID="4.1" Name="通道电压测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestVoltage" />
+            <Parameters>
+              <!-- 使用当前元素 ${channel} -->
+              <Param Name="channel" Type="int" Value="${channel}" />
+            </Parameters>
+            <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="2" CompareMode="GE_LE" />
+          </Step>
+        </SubSteps>
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：前置条件 (Precondition)
+        =========================================
+        只有当焦距测试结果大于0时才执行此步骤
+      -->
+      <Step ID="5" Name="亮度测试" Description="测试LED亮度（需要焦距测试通过）" Type="NumericTest" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <Precondition>${FocalLengthResult} > 0</Precondition>
+        <TargetMethod Class="CommonTestMethods" Method="TestBrightness" />
+        <Parameters>
+          <Param Name="productIndex" Type="int" Value="${ProductIndex}" />
+        </Parameters>
+        <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE" />
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：表达式计算
+        =========================================
+        在参数中使用数学表达式
+      -->
+      <Step ID="6" Name="调整测试" Description="使用表达式计算参数" Type="Action" Enabled="true" Timeout="5000">
+        <TargetMethod Class="CommonTestMethods" Method="SetParameter" />
+        <Parameters>
+          <!-- 表达式计算：ProductIndex + 1 -->
+          <Param Name="index" Type="int" Value="${ProductIndex + 1}" />
+          <!-- 表达式计算：FocalLengthResult * 2 -->
+          <Param Name="factor" Type="double" Value="${FocalLengthResult * 2}" />
+        </Parameters>
+      </Step>
+      
+      <!-- 演示结果存储：使用 ResultVariable 将结果存储到变量 -->
+      <Step ID="7" Name="二维码读取" Description="读取产品二维码信息" Type="StringTest" Enabled="true" Timeout="5000" RetryCount="1" OnFail="Continue" ResultVariable="BarcodeResult">
+        <TargetMethod Class="CommonTestMethods" Method="ReadBarcode" />
+      </Step>
+      
+      <Step ID="8" Name="脏污检测" Description="检测产品表面是否有脏污" Type="PassFail" Enabled="true" Timeout="10000" RetryCount="0" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestContamination" />
+      </Step>
+      
+      <!-- 
+        =========================================
+        演示：子序列调用
+        =========================================
+        调用另一个序列执行清理操作
+      -->
+      <Step ID="9" Name="执行清理子序列" Description="调用清理子序列" Type="SubSequenceCall" Enabled="true" 
+            SubSequenceId="SEQ_CLEANUP">
+        <!-- 也可以从外部文件加载子序列：SubSequenceFile="CleanupSequence.xml" -->
+      </Step>
+      
+      <!-- 演示存储到全局变量：使用 Global.变量名 前缀 -->
+      <Step ID="10" Name="更新计数器" Description="更新全局测试计数" Type="Action" Enabled="true" Timeout="3000" RetryCount="0" OnFail="Continue" ResultVariable="Global.TotalTestCount">
+        <TargetMethod Class="CommonTestMethods" Method="IncrementCounter" />
+      </Step>
+    </Steps>
+    <PostCondition>SaveResults</PostCondition>
+  </Sequence>
+  
+  <!-- 清理子序列 -->
+  <Sequence ID="SEQ_CLEANUP" Name="清理子序列" Description="测试后的清理操作" Enabled="true">
+    <Steps>
+      <Step ID="C1" Name="关闭设备" Type="Action" Enabled="true" Timeout="3000">
+        <TargetMethod Class="CommonTestMethods" Method="CloseDevice" />
+      </Step>
+      <Step ID="C2" Name="保存日志" Type="Action" Enabled="true" Timeout="2000">
+        <TargetMethod Class="CommonTestMethods" Method="SaveLog" />
+      </Step>
+    </Steps>
+  </Sequence>
+</TestSequenceConfig>
