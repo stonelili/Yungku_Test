@@ -90,6 +90,123 @@
 |-------|------|----------|------------|-------|------|
 | 序号 | 测试名称 | 下限 | 上限 | 测试值 | 结果 |
 
+## ⚠️ 多产品同时测试场景
+
+### 当前设计限制
+
+当前UI设计基于**一对一**模式（每个工位对应一个产品显示区域）。对于以下场景需要特别考虑：
+
+| 测试场景 | 当前支持情况 | 建议处理方式 |
+|----------|--------------|--------------|
+| 单产品测试 | ✅ 完全支持 | 直接使用左/右工位显示 |
+| 左右工位各一个产品 | ✅ 完全支持 | 左右工位分别显示 |
+| 多个相同产品同时测试 | ⚠️ 需区分 | 测试名称添加产品索引前缀 |
+| 多个不同产品同时测试 | ⚠️ 需区分 | 测试名称添加产品名称/类型前缀 |
+
+### 多产品测试的UI区分方案
+
+#### 方案1：测试名称添加产品标识（推荐）
+
+在测试步骤名称中包含产品索引或标识，使测试结果能够区分不同产品：
+
+```xml
+<!-- 示例：为每个产品创建独立的测试步骤 -->
+<Step ID="STEP_P0_VOLTAGE" Name="[P0] 电压测试" Type="NumericTest">
+  <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+  <Parameters>
+    <Param Name="channel" Type="int" Value="0"/>
+  </Parameters>
+  <Limits Lower="2.8" Upper="3.8" Unit="V"/>
+</Step>
+
+<Step ID="STEP_P1_VOLTAGE" Name="[P1] 电压测试" Type="NumericTest">
+  <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+  <Parameters>
+    <Param Name="channel" Type="int" Value="1"/>
+  </Parameters>
+  <Limits Lower="2.8" Upper="3.8" Unit="V"/>
+</Step>
+```
+
+界面显示效果：
+```
+| Order | Name           | LowLimit | UpperLimit | Value | Test |
+|-------|----------------|----------|------------|-------|------|
+| 1     | [P0] 电压测试  | 2.800    | 3.800      | 3.250 | PASS |
+| 2     | [P1] 电压测试  | 2.800    | 3.800      | 3.310 | PASS |
+```
+
+#### 方案2：使用循环和变量动态生成
+
+使用ForLoop循环遍历多个产品，结合变量生成带产品索引的测试名称：
+
+```xml
+<Step ID="MULTI_PRODUCT_TEST" Name="多产品电压测试" Type="ForLoop" 
+      LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIndex">
+  <SubSteps>
+    <Step ID="LOOP_VOLTAGE" Name="[P${productIndex}] 电压测试" Type="NumericTest">
+      <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+      <Parameters>
+        <Param Name="channel" Type="int" Value="${productIndex}"/>
+      </Parameters>
+      <Limits Lower="2.8" Upper="3.8" Unit="V"/>
+    </Step>
+  </SubSteps>
+</Step>
+```
+
+#### 方案3：产品分组显示（未来扩展）
+
+如需要更清晰的多产品区分，可考虑以下UI扩展：
+- 添加产品选择标签页（每个产品一个Tab）
+- 使用TreeView按产品分组显示测试结果
+- 在ListView中添加"产品"列
+
+### 不同产品类型的处理
+
+当同时测试不同类型的产品时，建议：
+
+1. **配置多个序列** - 每种产品类型使用独立的测试序列
+2. **使用不同的序列ID** - 在ActionSequenceTest中指定对应的SequenceId
+3. **测试名称添加产品类型标识** - 例如 `[TypeA]`, `[TypeB]`
+
+```xml
+<!-- A类产品序列 -->
+<Sequence ID="SEQ_TYPE_A" Name="A类产品测试">
+  <Steps>
+    <Step ID="A_INIT" Name="[TypeA] 初始化" .../>
+    <Step ID="A_TEST1" Name="[TypeA] 电压测试" .../>
+  </Steps>
+</Sequence>
+
+<!-- B类产品序列 -->
+<Sequence ID="SEQ_TYPE_B" Name="B类产品测试">
+  <Steps>
+    <Step ID="B_INIT" Name="[TypeB] 初始化" .../>
+    <Step ID="B_TEST1" Name="[TypeB] 功率测试" .../>
+  </Steps>
+</Sequence>
+```
+
+### 代码层面的产品区分
+
+在 `TestDisplayHelper` 中，通过 `GetStationIndexByProduct` 方法根据产品索引确定显示工位：
+
+```csharp
+// 当前实现：根据产品索引返回工位索引
+private static int GetStationIndexByProduct(Product product)
+{
+    if (product.Jig != null && product.Jig.Head != null)
+    {
+        int productIndex = product.Jig.Head.ProductIndexOf(product);
+        return productIndex; // 产品索引直接映射到工位索引
+    }
+    return 0;
+}
+```
+
+对于超过2个产品的情况，可扩展为动态创建多个显示区域或使用其他区分方式。
+
 ## 配置文件使用方法
 
 ### 在 ActionSequenceTest 中配置

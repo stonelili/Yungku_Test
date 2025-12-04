@@ -213,4 +213,96 @@
     </Steps>
   </Sequence>
   
+  <!-- 多产品同时测试示例 -->
+  <Sequence ID="SEQ_MULTI_PRODUCT" Name="多产品同时测试序列" Description="演示如何同时测试多个产品并在UI中区分显示" Enabled="true" Version="1.0">
+    <Variables>
+      <Variable Name="ProductCount" Type="int" DefaultValue="4" Description="同时测试的产品数量"/>
+    </Variables>
+    
+    <Steps>
+      <!-- 使用循环测试多个产品 -->
+      <Step ID="MULTI_VOLTAGE_LOOP" Name="多产品电压测试" Type="ForLoop" Enabled="true" 
+            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="10">
+        <SubSteps>
+          <!-- 测试名称包含产品索引，便于UI区分 -->
+          <Step ID="MULTI_VOLTAGE_TEST" Name="[P${productIdx}] 电压测试" Type="NumericTest" Enabled="true" Timeout="3000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+            <Parameters>
+              <Param Name="channel" Type="int" Value="${productIdx}"/>
+            </Parameters>
+            <Limits Lower="2.8" Upper="3.8" Unit="V" Precision="3" CompareMode="GE_LE"/>
+          </Step>
+        </SubSteps>
+      </Step>
+      
+      <!-- 多产品电流测试 -->
+      <Step ID="MULTI_CURRENT_LOOP" Name="多产品电流测试" Type="ForLoop" Enabled="true" 
+            LoopStart="0" LoopEnd="3" LoopStep="1" LoopVariable="productIdx" MaxIterations="10">
+        <SubSteps>
+          <Step ID="MULTI_CURRENT_TEST" Name="[P${productIdx}] 电流测试" Type="NumericTest" Enabled="true" Timeout="3000" OnFail="Continue">
+            <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
+            <Parameters>
+              <Param Name="channel" Type="int" Value="${productIdx}"/>
+            </Parameters>
+            <Limits Lower="15" Upper="25" Unit="mA" Precision="2" CompareMode="GE_LE"/>
+          </Step>
+        </SubSteps>
+      </Step>
+      
+      <!-- 或者直接为每个产品创建独立步骤（适用于产品数量固定的情况） -->
+      <Step ID="P0_BRIGHTNESS" Name="[Product0] 亮度测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestBrightness"/>
+        <Parameters>
+          <Param Name="productIndex" Type="int" Value="0"/>
+        </Parameters>
+        <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE"/>
+      </Step>
+      
+      <Step ID="P1_BRIGHTNESS" Name="[Product1] 亮度测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestBrightness"/>
+        <Parameters>
+          <Param Name="productIndex" Type="int" Value="1"/>
+        </Parameters>
+        <Limits Lower="800" Upper="1200" Unit="lux" Precision="1" CompareMode="GE_LE"/>
+      </Step>
+    </Steps>
+  </Sequence>
+  
+  <!-- 不同产品类型测试示例 -->
+  <Sequence ID="SEQ_TYPE_A" Name="A类产品测试序列" Description="A类产品专用测试流程" Enabled="true" Version="1.0">
+    <Steps>
+      <Step ID="TYPE_A_INIT" Name="[TypeA] 初始化" Type="PassFail" Enabled="true" Timeout="5000" OnFail="Abort">
+        <TargetMethod Class="CommonTestMethods" Method="Initialize"/>
+      </Step>
+      
+      <Step ID="TYPE_A_VOLTAGE" Name="[TypeA] 电压测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestVoltage"/>
+        <Limits Lower="3.0" Upper="3.6" Unit="V" Precision="3"/>
+      </Step>
+      
+      <Step ID="TYPE_A_FOCAL" Name="[TypeA] 焦距测试" Type="NumericTest" Enabled="true" Timeout="8000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestFocalLength"/>
+        <Limits Lower="3.5" Upper="4.0" Unit="mm" Precision="3"/>
+      </Step>
+    </Steps>
+  </Sequence>
+  
+  <Sequence ID="SEQ_TYPE_B" Name="B类产品测试序列" Description="B类产品专用测试流程" Enabled="true" Version="1.0">
+    <Steps>
+      <Step ID="TYPE_B_INIT" Name="[TypeB] 初始化" Type="PassFail" Enabled="true" Timeout="5000" OnFail="Abort">
+        <TargetMethod Class="CommonTestMethods" Method="Initialize"/>
+      </Step>
+      
+      <Step ID="TYPE_B_CURRENT" Name="[TypeB] 电流测试" Type="NumericTest" Enabled="true" Timeout="5000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestCurrent"/>
+        <Limits Lower="18" Upper="22" Unit="mA" Precision="2"/>
+      </Step>
+      
+      <Step ID="TYPE_B_CCT" Name="[TypeB] 色温测试" Type="NumericTest" Enabled="true" Timeout="8000" OnFail="Continue">
+        <TargetMethod Class="CommonTestMethods" Method="TestColorTemperature"/>
+        <Limits Lower="4000" Upper="5000" Unit="K" Precision="0"/>
+      </Step>
+    </Steps>
+  </Sequence>
+  
 </TestSequenceConfig>
