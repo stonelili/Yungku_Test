@@ -50,6 +50,9 @@ namespace Yungku.BNU01_V1.Handler.Tests
             // 测试配置加载/保存
             TestConfigSaveAndLoad();
 
+            // 测试配置验证器
+            TestConfigValidator();
+
             // 测试执行器
             TestSequenceExecutorBasic();
 
@@ -386,6 +389,92 @@ namespace Yungku.BNU01_V1.Handler.Tests
                 // 记录清理失败但不影响测试结果
                 testResults.AppendLine($"  [警告] 清理临时文件失败: {ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// 测试配置验证器
+        /// </summary>
+        private void TestConfigValidator()
+        {
+            BeginTest("配置验证器测试");
+
+            try
+            {
+                var validator = new SequenceConfigValidator();
+
+                // 创建有效配置进行验证
+                var validConfig = new TestSequenceConfig
+                {
+                    Name = "测试配置",
+                    Version = "1.0",
+                    Sequences = new List<TestSequence>
+                    {
+                        new TestSequence
+                        {
+                            ID = "SEQ_VALID",
+                            Name = "有效序列",
+                            Steps = new List<TestStep>
+                            {
+                                new TestStep
+                                {
+                                    ID = "1",
+                                    Name = "初始化步骤",
+                                    Type = StepType.PassFail,
+                                    TargetMethod = new TargetMethodInfo("CommonTestMethods", "Initialize"),
+                                    Timeout = 5000
+                                },
+                                new TestStep
+                                {
+                                    ID = "2",
+                                    Name = "数值测试步骤",
+                                    Type = StepType.NumericTest,
+                                    TargetMethod = new TargetMethodInfo("CommonTestMethods", "TestVoltage"),
+                                    Limits = new TestLimits(2.8, 3.8, "V"),
+                                    Timeout = 5000
+                                }
+                            }
+                        }
+                    }
+                };
+
+                var report = validator.ValidateConfig(validConfig);
+                AssertTrue("有效配置验证通过", report.IsValid);
+                AssertTrue("有效配置无错误", report.Errors.Count == 0);
+
+                // 创建无效配置进行验证
+                var invalidConfig = new TestSequenceConfig
+                {
+                    Name = "",
+                    Sequences = new List<TestSequence>
+                    {
+                        new TestSequence
+                        {
+                            ID = "",
+                            Name = "无ID序列",
+                            Steps = new List<TestStep>
+                            {
+                                new TestStep
+                                {
+                                    ID = "",
+                                    Name = "无ID步骤",
+                                    Type = StepType.NumericTest,
+                                    Limits = new TestLimits(10, 5, "V") // 下限大于上限
+                                }
+                            }
+                        }
+                    }
+                };
+
+                report = validator.ValidateConfig(invalidConfig);
+                AssertTrue("无效配置验证失败", !report.IsValid);
+                AssertTrue("发现配置错误", report.Errors.Count > 0);
+            }
+            catch (Exception ex)
+            {
+                LogResult("配置验证器测试", false, ex.Message);
+            }
+
+            EndTest();
         }
 
         #endregion
